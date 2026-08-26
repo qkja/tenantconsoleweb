@@ -1,14 +1,38 @@
+/* eslint-disable react-refresh/only-export-components --
+   路由配置模块：导出 lazy 组件 + router，非组件模块，fast-refresh 无意义 */
+import { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { ChangePassword } from '@/features/auth/change_password';
 import { LoginPage } from '@/features/auth/login_page';
-import { DirectoryPage } from '@/features/directory/directory_page';
-import { MemberPage } from '@/features/member/member_page';
-import { OrganizationPage } from '@/features/organization/organization_page';
-import { SecurityGroupPage } from '@/features/security_group/security_group_page';
-import { TenantPage } from '@/features/tenant/tenant_page';
-import { OverviewPage } from '@/features/overview/overview_page';
 import { ConsoleLayout } from '@/layouts/console_layout';
 import { RedirectIfAuthenticated, RequireAuth } from '@/router/guards';
+
+// 业务页懒加载（route-based code splitting）：主 chunk 只含外壳与登录，
+// 各功能页（含重型的 ProTable/ProForm）按需加载。
+const OverviewPage = lazy(() =>
+  import('@/features/overview/overview_page').then((m) => ({ default: m.OverviewPage })),
+);
+const DirectoryPage = lazy(() =>
+  import('@/features/directory/directory_page').then((m) => ({ default: m.DirectoryPage })),
+);
+const OrganizationPage = lazy(() =>
+  import('@/features/organization/organization_page').then((m) => ({
+    default: m.OrganizationPage,
+  })),
+);
+const MemberPage = lazy(() =>
+  import('@/features/member/member_page').then((m) => ({ default: m.MemberPage })),
+);
+const SecurityGroupPage = lazy(() =>
+  import('@/features/security_group/security_group_page').then((m) => ({
+    default: m.SecurityGroupPage,
+  })),
+);
+const TenantPage = lazy(() =>
+  import('@/features/tenant/tenant_page').then((m) => ({ default: m.TenantPage })),
+);
+const ChangePassword = lazy(() =>
+  import('@/features/auth/change_password').then((m) => ({ default: m.ChangePassword })),
+);
 
 /**
  * 路由表。/login 公开，控制台整体包 RequireAuth 守卫。

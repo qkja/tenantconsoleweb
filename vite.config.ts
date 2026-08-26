@@ -36,14 +36,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: [
-        'src/mocks/**',
-        'src/test/**',
-        'src/**/*.test.{ts,tsx}',
-        'src/main.tsx',
-        'src/vite-env.d.ts',
-      ],
+      // 质量门范围：api/hooks/stores 层（组件/页面由 Playwright E2E 覆盖）
+      include: ['src/api/**', 'src/hooks/**', 'src/stores/**'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/api/index.ts'],
       thresholds: {
         lines: 80,
         functions: 80,
