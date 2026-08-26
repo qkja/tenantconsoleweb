@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { App } from '@/app';
 import { query_client } from '@/lib/query_client';
+import '@/styles/tokens.css';
+import '@/styles/typography.css';
 import '@/styles/global.css';
 
 // Mock 模式（VITE_USE_MOCKS=true，见 .env.mock）下，在渲染前启动 MSW。

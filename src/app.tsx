@@ -1,17 +1,32 @@
 import { App as AntdApp, ConfigProvider } from 'antd';
+import enUS from 'antd/locale/en_US';
 import zhCN from 'antd/locale/zh_CN';
+import { RouterProvider } from 'react-router-dom';
+import { I18nProvider, use_i18n, type Language } from '@/lib/i18n';
+import { app_theme } from '@/lib/theme';
+import { router } from '@/router';
 
-// 全局 antd Provider 链：ConfigProvider（locale/主题）+ App（message/notification 上下文）。
-// 阶段 1 起在 App 内接入 RouterProvider 与控制台外壳。
-export function App() {
+const antd_locales: Record<Language, typeof zhCN> = {
+  zh_CN: zhCN,
+  en_US: enUS,
+};
+
+/** Provider 链：i18n → antd ConfigProvider（locale/主题）→ App（message/notification）→ Router。 */
+function ThemedApp() {
+  const { language } = use_i18n();
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={antd_locales[language]} theme={app_theme}>
       <AntdApp>
-        <main className="scaffold-page">
-          <h1>租户控制台</h1>
-          <p>脚手架就绪 — 阶段 1 起接入控制台外壳与路由。</p>
-        </main>
+        <RouterProvider router={router} />
       </AntdApp>
     </ConfigProvider>
+  );
+}
+
+export function App() {
+  return (
+    <I18nProvider>
+      <ThemedApp />
+    </I18nProvider>
   );
 }

@@ -1,0 +1,68 @@
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.top-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.top-bar__logo {
+  display: flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.top-bar__app-name {
+  font-size: var(--text-lg);
+  font-weight: 600;
+}
+
+.top-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.top-bar__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+}
+
+.top-bar__user {
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.top-bar__user:hover {
+  background: var(--color-surface-muted);
+}
+
+.top-bar__avatar {
+  background: var(--color-primary-bg);
+  color: var(--color-primary);
+}
+
+.top-bar__username {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}

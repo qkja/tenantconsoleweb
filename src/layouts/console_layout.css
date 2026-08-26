@@ -1,0 +1,17 @@
+.console-layout {
+  min-height: 100vh;
+}
+
+.console-layout__body {
+  min-height: calc(100vh - var(--top-bar-height));
+}
+
+.console-layout__content {
+  background: var(--color-layout-bg);
+}
+
+.console-layout__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--space-lg);
+}

@@ -1,0 +1,8 @@
+.side-nav {
+  border-right: 1px solid var(--color-border);
+}
+
+.side-nav__menu {
+  border-inline-end: none !important;
+  padding: var(--space-sm) var(--space-xs);
+}

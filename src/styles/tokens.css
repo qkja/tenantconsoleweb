@@ -1,0 +1,77 @@
+/* ============================================================
+   设计令牌 —— 唯一色板来源
+   与 src/lib/theme.ts 的 antd theme token 一一对应（hex 同值）。
+   antd 只能吃具体色值；两处保持同值避免漂移。
+   语义色（success/warning/error）仅供状态使用，不作装饰。
+   ============================================================ */
+
+:root {
+  /* 品牌色（主色 oklch(55% 0.19 258) ≈ #166CDD） */
+  --color-primary: #166cdd;
+  --color-primary-hover: #3b84e4;
+  --color-primary-active: #0e57b5;
+  --color-primary-bg: #edf4fe;
+  --color-primary-border: #bfd6f6;
+
+  /* 文本 */
+  --color-text: #1f2733;
+  --color-text-secondary: #5c6672;
+  --color-text-tertiary: #8a94a3;
+  --color-text-inverse: #fff;
+
+  /* 表面分层（顶栏/侧栏/内容区靠 surface 区分） */
+  --color-surface: #fff;
+  --color-surface-muted: #f7f9fc;
+  --color-surface-sunken: #eef1f6;
+  --color-layout-bg: #f4f6fa;
+  --color-border: #e3e8ef;
+  --color-border-strong: #c9d2de;
+
+  /* 语义色（仅状态） */
+  --color-success: #16a34a;
+  --color-success-bg: #eaf8f0;
+  --color-warning: #d97706;
+  --color-warning-bg: #fef5e7;
+  --color-error: #dc2626;
+  --color-error-bg: #fdeeee;
+  --color-info: #166cdd;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / 0.05);
+  --shadow-md: 0 2px 8px rgb(16 24 40 / 0.06);
+  --shadow-lg: 0 8px 24px rgb(16 24 40 / 0.08);
+
+  /* 圆角 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* 间距（非均质节奏：概览区呼吸感强，表格区紧凑） */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* 字号（scale contrast 明显） */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 22px;
+  --text-3xl: 28px;
+  --text-4xl: 36px;
+
+  /* 布局 */
+  --top-bar-height: 56px;
+  --side-nav-width: 232px;
+  --content-max-width: 1440px;
+
+  /* 动效 */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}

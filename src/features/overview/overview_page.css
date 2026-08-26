@@ -1,0 +1,18 @@
+.overview-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.overview-page__header {
+  padding: var(--space-xl) var(--space-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.overview-page__stat-card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}

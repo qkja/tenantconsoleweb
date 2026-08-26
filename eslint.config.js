@@ -34,8 +34,13 @@ export default tseslint.config(
         'error',
         // 类型/接口/枚举 → PascalCase
         { selector: 'typeLike', format: ['PascalCase'] },
-        // 接口/类型声明字段 → snake_case（identityhub 契约；tenantmanager.ts 例外）
-        { selector: 'typeProperty', format: ['snake_case'] },
+        // 接口/类型声明字段 → snake_case（identityhub 契约；tenantmanager.ts 例外；
+        // i18n 字典的「点分 key」如 'nav.member' 通过 filter 豁免）
+        {
+          selector: 'typeProperty',
+          format: ['snake_case'],
+          filter: { regex: '^[^.]+$', match: true },
+        },
         // 枚举成员 → PascalCase
         { selector: 'enumMember', format: ['PascalCase'] },
         // 函数与变量：snake_case 为主，PascalCase 仅允许组件名，UPPER_CASE 允许模块常量
@@ -52,6 +57,13 @@ export default tseslint.config(
 
       // React 19 + 函数组件为主，禁用不必要的 React 作用域引用
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+  // context 模块合法地同时导出 Provider 与 hooks，放宽 fast-refresh 告警。
+  {
+    files: ['src/lib/i18n.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
 );

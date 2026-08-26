@@ -1,8 +1,8 @@
 {
   "extends": ["stylelint-config-standard"],
   "rules": {
-    "custom-property-pattern": "^--[a-z][a-z0-9-]*$",
-    "selector-class-pattern": "^[a-z][a-z0-9-]*$",
+    "custom-property-pattern": "^(--)?[a-z][a-z0-9-]*$",
+    "selector-class-pattern": "^[a-z][a-z0-9_-]*$",
     "color-function-notation": "modern",
     "alpha-value-notation": "number",
     "no-descending-specificity": null,
