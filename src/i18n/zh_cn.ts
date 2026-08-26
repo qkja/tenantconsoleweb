@@ -77,6 +77,7 @@ export const zh_cn: Dict = {
   'member.email_invalid': '邮箱格式不正确',
   'member.status': '状态',
   'member.primary_org': '所属部门',
+  'member.search': '搜索成员',
   'member.delete_confirm': '确认删除该成员？',
 
   /* 安全组 */

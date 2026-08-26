@@ -1,6 +1,6 @@
 import type { UserInfo } from '@/types/identityhub';
 
-/** MSW 成员夹具 —— 后端 ListUser 缺失时的数据源（docs/backend-gap-list.md）。 */
+/** MSW 成员夹具 —— 仅 dev:mock 全量模式（VITE_MOCK_SCOPE=all）的数据源。 */
 export const mock_users: UserInfo[] = [
   {
     id: 'u_1001',

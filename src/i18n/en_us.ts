@@ -78,6 +78,7 @@ export const en_us: Dict = {
   'member.email_invalid': 'Invalid email format',
   'member.status': 'Status',
   'member.primary_org': 'Department',
+  'member.search': 'Search members',
   'member.delete_confirm': 'Delete this member?',
 
   /* Security groups */

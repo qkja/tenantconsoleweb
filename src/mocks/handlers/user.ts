@@ -6,7 +6,11 @@ import { mock_users } from '@/mocks/fixtures/user';
 
 const OK = '0';
 
-/** 成员列表 —— 后端 ListUser 缺失，MSW 按 domain/org_id 过滤夹具。 */
+/**
+ * 成员 mock —— 仅 dev:mock 全量模式（VITE_MOCK_SCOPE=all）注册；
+ * dev 真实后端模式用户管理已走真实网关（ListUser/SearchUser），本组不参与。
+ * 按 domain/org_id 过滤夹具。
+ */
 export const user_handlers = [
   http.get('/api/identityhub/v1/user/list', ({ request }) => {
     const url = new URL(request.url);

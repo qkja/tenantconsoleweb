@@ -1,7 +1,7 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
-import { App, Button, Popconfirm, Space, Tag } from 'antd';
+import { App, Button, Input, Popconfirm, Space, Tag } from 'antd';
 import { useState } from 'react';
 import { delete_user } from '@/api/user';
 import { MemberDetails } from '@/features/member/member_details';
@@ -16,11 +16,12 @@ interface UserTableProps {
   org_id: string | null;
 }
 
-/** 成员表格 —— 数据源 = use_user_list（Mock）。详情/增删改走真实网关。 */
+/** 成员表格 —— 数据源 = use_user_list（真实网关）。keyword 非空走 /search。详情/增删改走真实网关。 */
 export function UserTable({ domain, org_id }: UserTableProps) {
   const t = use_t();
   const { message } = App.useApp();
-  const { data: users = [], refetch, isLoading } = use_user_list(domain, org_id);
+  const [keyword, set_keyword] = useState('');
+  const { data: users = [], refetch, isLoading } = use_user_list(domain, org_id, keyword);
   const [form_open, set_form_open] = useState(false);
   const [editing, set_editing] = useState<UserInfo | null>(null);
   const [detail_id, set_detail_id] = useState<string | null>(null);
@@ -82,6 +83,18 @@ export function UserTable({ domain, org_id }: UserTableProps) {
         pagination={false}
         options={false}
         toolBarRender={() => [
+          <Input.Search
+            key="search"
+            placeholder={t('member.search')}
+            allowClear
+            onSearch={(value) => set_keyword(value.trim())}
+            onChange={(event) => {
+              if (event.target.value === '') {
+                set_keyword('');
+              }
+            }}
+            style={{ width: 240 }}
+          />,
           <Button
             key="create"
             type="primary"

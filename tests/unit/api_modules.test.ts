@@ -30,7 +30,14 @@ import {
   update_security_group,
 } from '@/api/security_group';
 import { create_tenant, get_tenant } from '@/api/tenant';
-import { create_user, delete_user, get_user, list_users, update_user } from '@/api/user';
+import {
+  create_user,
+  delete_user,
+  get_user,
+  list_users,
+  search_users,
+  update_user,
+} from '@/api/user';
 
 vi.mock('@/api/client', () => ({ request: vi.fn() }));
 
@@ -195,7 +202,7 @@ describe('security_group / user / tenant api', () => {
   });
 
   it('user: list/get/create/update/delete', async () => {
-    request_mock.mockResolvedValue({ list: [], total: 0 });
+    request_mock.mockResolvedValue({ list: [], total: 0, page: 1, page_size: 20 });
     await list_users({ domain: '1000001', org_id: 'org_a' });
     expect(request_mock).toHaveBeenCalledWith('/identityhub/v1/user/list', {
       params: { domain: '1000001', org_id: 'org_a' },
@@ -222,6 +229,14 @@ describe('security_group / user / tenant api', () => {
     expect(request_mock).toHaveBeenNthCalledWith(5, '/identityhub/v1/user/delete', {
       method: 'DELETE',
       params: { id: 'u_1', domain: '1000001' },
+    });
+  });
+
+  it('user: search 拼 keyword（identityhubsvr SearchUser）', async () => {
+    request_mock.mockResolvedValue({ list: [], total: 0, page: 1, page_size: 20 });
+    await search_users({ domain: '1000001', keyword: '张' });
+    expect(request_mock).toHaveBeenCalledWith('/identityhub/v1/user/search', {
+      params: { domain: '1000001', keyword: '张' },
     });
   });
 

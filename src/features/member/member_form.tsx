@@ -33,11 +33,11 @@ export function MemberForm({ domain, open, editing, on_close, on_saved }: Member
   const on_submit = async (values: MemberFormValues) => {
     try {
       if (editing != null) {
+        // Update 全量覆盖：后端 UpdateUser 仅支持邮箱/手机/显示名（primary_org 走 SetPrimaryOrg，暂缺）。
         await update_user(editing.id, domain, {
           display_name: values.display_name,
           phone: values.phone,
           email: values.email,
-          primary_org_id: values.primary_org_id,
         });
       } else {
         await create_user({

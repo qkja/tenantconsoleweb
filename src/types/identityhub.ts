@@ -71,3 +71,11 @@ export interface UserInfo {
   created_at: string;
   updated_at: string;
 }
+
+/** 用户分页结构（ListUser/SearchUser）—— {list, total, page, page_size}，注意与 Directory {total, list} 不同。 */
+export interface UserListData {
+  list: UserInfo[];
+  total: number;
+  page: number;
+  page_size: number;
+}

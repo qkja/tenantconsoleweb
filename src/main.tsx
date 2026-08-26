@@ -9,16 +9,20 @@ import '@/styles/tokens.css';
 import '@/styles/typography.css';
 import '@/styles/global.css';
 
-// Mock 模式（VITE_USE_MOCKS=true，见 .env.mock）下，在渲染前启动 MSW。
-// 切回真实后端只需关掉该开关 + 关闭 vite 代理即可，代码零改动。
-async function enable_mocks() {
-  const { worker } = await import('@/mocks/browser');
+// Mock 作用域（VITE_MOCK_SCOPE，见 .env / .env.mock）：
+//   auth —— dev 真实后端模式：认证后端未落地，仅认证走 MSW；用户管理等其余走真实网关。
+//   all  —— dev:mock 全量模式：所有后端缺失接口均走 MSW，无需后端。
+// 渲染前启动 MSW；留空则不启动。
+async function enable_mocks(scope: 'all' | 'auth') {
+  const { get_worker } = await import('@/mocks/browser');
+  const worker = get_worker(scope);
   await worker.start({ onUnhandledRequest: 'bypass' });
 }
 
 async function bootstrap() {
-  if (import.meta.env.VITE_USE_MOCKS === 'true') {
-    await enable_mocks();
+  const mock_scope = import.meta.env.VITE_MOCK_SCOPE;
+  if (mock_scope === 'all' || mock_scope === 'auth') {
+    await enable_mocks(mock_scope);
   }
   const container = document.getElementById('root');
   if (container == null) {

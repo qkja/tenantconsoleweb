@@ -80,6 +80,7 @@ export interface Dict {
   'member.email_invalid': string;
   'member.status': string;
   'member.primary_org': string;
+  'member.search': string;
   'member.delete_confirm': string;
 
   /* 安全组 */

@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { list_directory } from '@/api/directory';
 import { list_organization_children } from '@/api/organization';
 import { get_tenant } from '@/api/tenant';
-import { list_users } from '@/api/user';
+import { list_users, search_users } from '@/api/user';
 import { use_directory_list } from '@/hooks/queries/use_directory_list';
 import { use_organization_children } from '@/hooks/queries/use_organization_children';
 import { use_tenant_info } from '@/hooks/queries/use_tenant_info';
@@ -14,12 +14,13 @@ import { use_user_list } from '@/hooks/queries/use_user_list';
 vi.mock('@/api/directory', () => ({ list_directory: vi.fn() }));
 vi.mock('@/api/organization', () => ({ list_organization_children: vi.fn() }));
 vi.mock('@/api/tenant', () => ({ get_tenant: vi.fn() }));
-vi.mock('@/api/user', () => ({ list_users: vi.fn() }));
+vi.mock('@/api/user', () => ({ list_users: vi.fn(), search_users: vi.fn() }));
 
 const directory_mock = vi.mocked(list_directory);
 const organization_mock = vi.mocked(list_organization_children);
 const tenant_mock = vi.mocked(get_tenant);
 const users_mock = vi.mocked(list_users);
+const search_users_mock = vi.mocked(search_users);
 
 function wrapper({ children }: { children: ReactNode }) {
   const query_client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -32,6 +33,7 @@ describe('query hooks', () => {
     organization_mock.mockReset();
     tenant_mock.mockReset();
     users_mock.mockReset();
+    search_users_mock.mockReset();
   });
 
   it('use_directory_list 返回 list', async () => {
@@ -71,7 +73,7 @@ describe('query hooks', () => {
   });
 
   it('use_user_list 传 org_id 为 undefined 时展示全部', async () => {
-    users_mock.mockResolvedValue({ list: [], total: 0 });
+    users_mock.mockResolvedValue({ list: [], total: 0, page: 1, page_size: 500 });
 
     const { result } = renderHook(() => use_user_list('1000001', null), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -81,6 +83,20 @@ describe('query hooks', () => {
       page: 1,
       page_size: 500,
     });
+  });
+
+  it('use_user_list 带 keyword 时走 search_users（真实网关 SearchUser）', async () => {
+    search_users_mock.mockResolvedValue({ list: [], total: 0, page: 1, page_size: 500 });
+
+    const { result } = renderHook(() => use_user_list('1000001', null, '研发'), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(search_users_mock).toHaveBeenCalledWith({
+      domain: '1000001',
+      keyword: '研发',
+      page: 1,
+      page_size: 500,
+    });
+    expect(users_mock).not.toHaveBeenCalled();
   });
 
   it('use_tenant_info 仅在 domain 存在时请求', async () => {
