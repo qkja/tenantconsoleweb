@@ -225,11 +225,11 @@ describe('security_group / user / tenant api', () => {
     });
   });
 
-  it('tenant: get 传 id（camelCase 契约）', async () => {
+  it('tenant: get 以 domain 寻址（camelCase 契约）', async () => {
     request_mock.mockResolvedValue({} as never);
-    await get_tenant('t_1');
+    await get_tenant('1000001');
     expect(request_mock).toHaveBeenCalledWith('/tenantmanager/v1/tenant/get', {
-      params: { id: 't_1' },
+      params: { domain: '1000001' },
     });
 
     request_mock.mockResolvedValue(undefined);

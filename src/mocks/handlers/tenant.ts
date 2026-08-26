@@ -9,8 +9,8 @@ const OK = '0';
 export const tenant_handlers = [
   http.get('/api/tenantmanager/v1/tenant/get', ({ request }) => {
     const url = new URL(request.url);
-    const id = url.searchParams.get('id') ?? '';
-    if (id !== mock_tenant_info.id) {
+    const domain = url.searchParams.get('domain') ?? '';
+    if (domain !== mock_tenant_info.domain) {
       return HttpResponse.json<ApiEnvelope<never>>({
         code: '1003',
         msg: '企业不存在',

@@ -83,7 +83,7 @@ describe('query hooks', () => {
     });
   });
 
-  it('use_tenant_info 仅在 tenant_id 存在时请求', async () => {
+  it('use_tenant_info 仅在 domain 存在时请求', async () => {
     tenant_mock.mockResolvedValue({
       id: 't_1',
       name: '示例科技',
@@ -98,9 +98,9 @@ describe('query hooks', () => {
       updateTime: '',
     });
 
-    const { result } = renderHook(() => use_tenant_info('t_1'), { wrapper });
+    const { result } = renderHook(() => use_tenant_info('1000001'), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(tenant_mock).toHaveBeenCalledWith('t_1');
+    expect(tenant_mock).toHaveBeenCalledWith('1000001');
     expect(result.current.data?.name).toBe('示例科技');
   });
 });

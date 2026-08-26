@@ -4,11 +4,11 @@ import { use_tenant_info } from '@/hooks/queries/use_tenant_info';
 import { use_t } from '@/lib/i18n';
 import './tenant_page.css';
 
-/** 企业信息 —— tenantmanagersvr 编译失败，由 MSW 提供（docs/backend-gap-list.md）。 */
+/** 企业信息 —— 以租户 domain 寻址（tenantmanagersvr 修复后走真实网关）。 */
 export function TenantPage() {
   const t = use_t();
-  const { tenant_id } = use_scope();
-  const { data: tenant, isLoading } = use_tenant_info(tenant_id);
+  const { tenant_domain } = use_scope();
+  const { data: tenant, isLoading } = use_tenant_info(tenant_domain);
 
   return (
     <div className="tenant-page">
