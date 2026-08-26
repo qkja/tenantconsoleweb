@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
+// antd v5 官方 React 19 兼容补丁（须在 antd 使用前引入）。
+import '@ant-design/v5-patch-for-react-19';
 import { App } from '@/app';
 import { query_client } from '@/lib/query_client';
 import '@/styles/tokens.css';

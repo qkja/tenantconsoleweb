@@ -128,12 +128,14 @@ describe('auth api（契约 docs/auth-contract.md）', () => {
     expect(request_mock).toHaveBeenCalledWith('/authnexus/v1/auth/login', {
       method: 'POST',
       body: { account: 'admin', password: 'admin123' },
+      skip_auth_refresh: true,
     });
 
     await select_tenant('ticket_1', 't_001');
     expect(request_mock).toHaveBeenCalledWith('/authnexus/v1/auth/select-tenant', {
       method: 'POST',
       body: { login_ticket: 'ticket_1', tenant_id: 't_001' },
+      skip_auth_refresh: true,
     });
 
     await refresh_session();

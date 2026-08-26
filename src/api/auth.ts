@@ -19,7 +19,12 @@ export interface LoginResult {
 }
 
 export function login(params: LoginParams): Promise<LoginResult> {
-  return request<LoginResult>('/authnexus/v1/auth/login', { method: 'POST', body: params });
+  // skip_auth_refresh：登录失败返回 1004 = 密码错误，不得被 401 自动刷新吞掉。
+  return request<LoginResult>('/authnexus/v1/auth/login', {
+    method: 'POST',
+    body: params,
+    skip_auth_refresh: true,
+  });
 }
 
 /** 多企业场景：凭 login_ticket + 选中的 tenant_id 换取正式会话。 */
@@ -27,6 +32,7 @@ export function select_tenant(login_ticket: string, tenant_id: string): Promise<
   return request<SessionPayload>('/authnexus/v1/auth/select-tenant', {
     method: 'POST',
     body: { login_ticket, tenant_id },
+    skip_auth_refresh: true,
   });
 }
 
