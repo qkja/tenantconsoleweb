@@ -50,6 +50,8 @@ export default tseslint.config(
         // 解构变量/参数（多来自库对象）→ 不约束
         { selector: 'variable', modifiers: ['destructured'], format: null },
         { selector: 'parameter', modifiers: ['destructured'], format: null },
+        // 未使用参数/变量（如 antd 校验器的 `_`）→ 不约束
+        { selector: ['variable', 'parameter'], modifiers: ['unused'], format: null },
       ],
 
       // 禁止残留调试输出；warn/error 级别的 console 保留（错误监控）

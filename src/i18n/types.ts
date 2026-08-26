@@ -24,6 +24,25 @@ export interface Dict {
   'topbar.change_password': string;
   'topbar.logout': string;
 
+  /* 认证 */
+  'auth.login_title': string;
+  'auth.account': string;
+  'auth.account_required': string;
+  'auth.account_placeholder': string;
+  'auth.password': string;
+  'auth.password_required': string;
+  'auth.password_placeholder': string;
+  'auth.login': string;
+  'auth.error_unknown': string;
+  'auth.select_tenant': string;
+  'auth.select_tenant_hint': string;
+  'auth.change_password_title': string;
+  'auth.old_password': string;
+  'auth.new_password': string;
+  'auth.confirm_password': string;
+  'auth.confirm_mismatch': string;
+  'auth.password_updated': string;
+
   /* 通用 */
   'common.placeholder': string;
   'common.retry': string;

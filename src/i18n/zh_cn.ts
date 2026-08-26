@@ -21,6 +21,25 @@ export const zh_cn: Dict = {
   'topbar.change_password': '修改密码',
   'topbar.logout': '退出登录',
 
+  /* 认证 */
+  'auth.login_title': '登录租户控制台',
+  'auth.account': '账号',
+  'auth.account_required': '请输入账号',
+  'auth.account_placeholder': '请输入账号',
+  'auth.password': '密码',
+  'auth.password_required': '请输入密码',
+  'auth.password_placeholder': '请输入密码',
+  'auth.login': '登 录',
+  'auth.error_unknown': '登录失败，请稍后重试',
+  'auth.select_tenant': '选择企业',
+  'auth.select_tenant_hint': '该账号可访问以下企业，请选择进入',
+  'auth.change_password_title': '修改密码',
+  'auth.old_password': '原密码',
+  'auth.new_password': '新密码',
+  'auth.confirm_password': '确认新密码',
+  'auth.confirm_mismatch': '两次输入的密码不一致',
+  'auth.password_updated': '密码修改成功',
+
   /* 通用 */
   'common.placeholder': '暂无数据',
   'common.retry': '重试',

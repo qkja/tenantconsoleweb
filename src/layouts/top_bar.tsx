@@ -1,5 +1,7 @@
-import { LogoutOutlined, TranslationOutlined, UserOutlined } from '@ant-design/icons';
+import { KeyOutlined, LogoutOutlined, TranslationOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Dropdown, Layout, Space, type MenuProps } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '@/api/auth';
 import { DirectorySwitcher } from '@/components/directory_switcher';
 import { TenantSwitcher } from '@/components/tenant_switcher';
 import { use_i18n, type Language } from '@/lib/i18n';
@@ -24,14 +26,28 @@ export function TopBar() {
     label: option.label,
   }));
 
+  const navigate = useNavigate();
+
   const user_items: MenuProps['items'] = [
+    { key: 'change-password', label: t('topbar.change_password'), icon: <KeyOutlined /> },
+    { type: 'divider' },
     { key: 'logout', label: t('topbar.logout'), icon: <LogoutOutlined /> },
   ];
 
-  const on_user_menu_click: MenuProps['onClick'] = ({ key }) => {
+  const on_user_menu_click: MenuProps['onClick'] = async ({ key }) => {
+    if (key === 'change-password') {
+      navigate('/change-password');
+      return;
+    }
     if (key === 'logout') {
-      // 阶段 3 接入 auth.logout API 后再清理；此处仅清内存会话。
+      // 先通知后端失效 refresh cookie，再清理内存会话并回登录页。
+      try {
+        await logout();
+      } catch {
+        // 登出失败不阻塞本地清理。
+      }
       clear_session();
+      navigate('/login', { replace: true });
     }
   };
 
