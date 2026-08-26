@@ -1,0 +1,4 @@
+.member-details__loading {
+  color: var(--color-text-tertiary);
+  text-align: center;
+}

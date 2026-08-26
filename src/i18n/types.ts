@@ -65,6 +65,22 @@ export interface Dict {
   'organization.no_selection': string;
   'organization.member_count': string;
 
+  /* 成员 */
+  'member.title': string;
+  'member.create': string;
+  'member.edit': string;
+  'member.detail': string;
+  'member.display_name': string;
+  'member.display_name_required': string;
+  'member.username': string;
+  'member.username_required': string;
+  'member.phone': string;
+  'member.email': string;
+  'member.email_invalid': string;
+  'member.status': string;
+  'member.primary_org': string;
+  'member.delete_confirm': string;
+
   /* 通用动作 */
   'common.placeholder': string;
   'common.retry': string;

@@ -1,0 +1,15 @@
+.member-page {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.member-page__tree-card {
+  position: sticky;
+  top: calc(var(--top-bar-height) + var(--space-lg));
+}
+
+.member-page__table-card {
+  min-height: 480px;
+}

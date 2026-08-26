@@ -62,6 +62,22 @@ export const zh_cn: Dict = {
   'organization.no_selection': '请选择左侧部门查看详情',
   'organization.member_count': '直属成员',
 
+  /* 成员 */
+  'member.title': '成员管理',
+  'member.create': '添加成员',
+  'member.edit': '编辑成员',
+  'member.detail': '成员详情',
+  'member.display_name': '姓名',
+  'member.display_name_required': '请输入姓名',
+  'member.username': '账号',
+  'member.username_required': '请输入账号',
+  'member.phone': '手机号',
+  'member.email': '邮箱',
+  'member.email_invalid': '邮箱格式不正确',
+  'member.status': '状态',
+  'member.primary_org': '所属部门',
+  'member.delete_confirm': '确认删除该成员？',
+
   /* 通用动作 */
   'common.placeholder': '暂无数据',
   'common.retry': '重试',

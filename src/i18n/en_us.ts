@@ -63,6 +63,22 @@ export const en_us: Dict = {
   'organization.no_selection': 'Select a department on the left to view details',
   'organization.member_count': 'Direct members',
 
+  /* Members */
+  'member.title': 'Members',
+  'member.create': 'Add member',
+  'member.edit': 'Edit member',
+  'member.detail': 'Member details',
+  'member.display_name': 'Name',
+  'member.display_name_required': 'Please enter a name',
+  'member.username': 'Username',
+  'member.username_required': 'Please enter a username',
+  'member.phone': 'Phone',
+  'member.email': 'Email',
+  'member.email_invalid': 'Invalid email format',
+  'member.status': 'Status',
+  'member.primary_org': 'Department',
+  'member.delete_confirm': 'Delete this member?',
+
   /* Common actions */
   'common.placeholder': 'No data',
   'common.retry': 'Retry',

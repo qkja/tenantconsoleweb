@@ -1,5 +1,21 @@
 import { request } from '@/api/client';
+import type { PageEnvelope } from '@/api/envelope';
 import type { UserInfo } from '@/types/identityhub';
+
+export interface ListUsersParams {
+  domain: string;
+  org_id?: string;
+  page?: number;
+  page_size?: number;
+}
+
+/**
+ * 成员列表 —— 后端暂无 ListUser（docs/backend-gap-list.md），
+ * 由 MSW 提供数据源；后端补齐后本函数直连真实网关。
+ */
+export function list_users(params: ListUsersParams): Promise<PageEnvelope<UserInfo>> {
+  return request<PageEnvelope<UserInfo>>('/identityhub/v1/user/list', { params });
+}
 
 /**
  * 成员（User）接口。后端暂无 List/Search —— 列表数据源由 Mock 补齐
