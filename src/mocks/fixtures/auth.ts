@@ -1,8 +1,8 @@
-import type { SessionUser, TenantOption } from '@/types/auth';
+import type { SessionTenant, SessionUser } from '@/types/auth';
 
-/** MSW 认证夹具 —— 契约实现，非真实数据。 */
+/** MSW 认证夹具 —— 契约实现，非真实数据。登录账号 = 租户 domain。 */
 
-export const mock_tenants: TenantOption[] = [
+export const mock_tenants: SessionTenant[] = [
   {
     tenant_id: 't_001',
     tenant_name: '示例科技有限公司',
@@ -19,17 +19,16 @@ export const mock_tenants: TenantOption[] = [
   },
 ];
 
-export interface MockAccount {
-  account: string;
+/** 租户认证（管理员）：domain 即账号。 */
+export interface MockTenantAccount {
+  domain: string;
   password: string;
   user: SessionUser;
-  tenant_ids: string[];
 }
 
-/** admin 属两租户（触发多企业选择）；member 属单租户。 */
-export const mock_accounts: MockAccount[] = [
+export const mock_tenant_accounts: MockTenantAccount[] = [
   {
-    account: 'admin',
+    domain: '1000001',
     password: 'admin123',
     user: {
       user_id: 'u_001',
@@ -38,10 +37,32 @@ export const mock_accounts: MockAccount[] = [
       scope: 'admin',
       roles: ['tenant_admin'],
     },
-    tenant_ids: ['t_001', 't_002'],
   },
   {
-    account: 'member',
+    domain: '1000002',
+    password: 'admin123',
+    user: {
+      user_id: 'u_003',
+      username: 'admin',
+      display_name: 'Acme Admin',
+      scope: 'admin',
+      roles: ['tenant_admin'],
+    },
+  },
+];
+
+/** 用户认证（成员）：domain + account + password。 */
+export interface MockUserAccount {
+  domain: string;
+  account: string;
+  password: string;
+  user: SessionUser;
+}
+
+export const mock_user_accounts: MockUserAccount[] = [
+  {
+    domain: '1000001',
+    account: 'zhangwei',
     password: 'member123',
     user: {
       user_id: 'u_002',
@@ -50,12 +71,9 @@ export const mock_accounts: MockAccount[] = [
       scope: 'member',
       roles: ['member'],
     },
-    tenant_ids: ['t_001'],
   },
 ];
 
-export function tenants_of(tenant_ids: string[]): TenantOption[] {
-  return tenant_ids
-    .map((id) => mock_tenants.find((tenant) => tenant.tenant_id === id))
-    .filter((tenant): tenant is TenantOption => tenant != null);
+export function tenant_of(domain: string): SessionTenant | undefined {
+  return mock_tenants.find((tenant) => tenant.domain === domain);
 }

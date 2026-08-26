@@ -1,5 +1,7 @@
 import type { HttpHandler } from 'msw';
 import { auth_handlers } from '@/mocks/handlers/auth';
+import { directory_handlers } from '@/mocks/handlers/directory';
+import { organization_handlers } from '@/mocks/handlers/organization';
 import { security_group_handlers } from '@/mocks/handlers/security_group';
 import { tenant_handlers } from '@/mocks/handlers/tenant';
 import { user_handlers } from '@/mocks/handlers/user';
@@ -8,6 +10,8 @@ import { user_handlers } from '@/mocks/handlers/user';
 // 切真实后端：关 mock（VITE_USE_MOCKS）即可，handlers 不影响生产构建。
 export const handlers: HttpHandler[] = [
   ...auth_handlers,
+  ...directory_handlers,
+  ...organization_handlers,
   ...user_handlers,
   ...security_group_handlers,
   ...tenant_handlers,

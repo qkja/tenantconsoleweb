@@ -1,21 +1,19 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, NumberOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '@/api/auth';
-import { TenantPicker } from '@/features/auth/tenant_picker';
 import { use_i18n } from '@/lib/i18n';
 import { use_scope } from '@/stores/scope';
 import { use_session } from '@/stores/session';
-import type { SessionPayload, TenantOption } from '@/types/auth';
 import './login_page.css';
 
 interface LoginFormValues {
-  account: string;
+  domain: string;
   password: string;
 }
 
-/** 登录页 —— 企微风格居中卡片。租户认证与用户认证共用（后端判 scope）。 */
+/** 登录页 —— 账号 = 租户 domain（7 位数字），无多企业选择。 */
 export function LoginPage() {
   const { t } = use_i18n();
   const navigate = useNavigate();
@@ -24,46 +22,25 @@ export function LoginPage() {
 
   const [submitting, set_submitting] = useState(false);
   const [error_msg, set_error_msg] = useState<string | null>(null);
-  const [pending_ticket, set_pending_ticket] = useState<string | null>(null);
-  const [pending_tenants, set_pending_tenants] = useState<TenantOption[]>([]);
-
-  const enter_session = (session: SessionPayload) => {
-    set_session(session);
-    const first = session.tenants[0];
-    if (first != null) {
-      set_tenant({
-        tenant_id: first.tenant_id,
-        tenant_domain: first.domain,
-        ui_language: first.ui_language,
-      });
-    }
-    navigate('/overview', { replace: true });
-  };
 
   const on_finish = async (values: LoginFormValues) => {
     set_submitting(true);
     set_error_msg(null);
     try {
-      const result = await login(values);
-      if (result.session != null) {
-        enter_session(result.session);
-      } else if (result.login_ticket != null && result.tenants != null) {
-        set_pending_ticket(result.login_ticket);
-        set_pending_tenants(result.tenants);
-      } else {
-        set_error_msg(t('auth.error_unknown'));
-      }
+      const session = await login(values);
+      set_session(session);
+      set_tenant({
+        tenant_id: session.tenant.tenant_id,
+        tenant_domain: session.tenant.domain,
+        ui_language: session.tenant.ui_language,
+      });
+      navigate('/overview', { replace: true });
     } catch (error) {
       set_error_msg(error instanceof Error ? error.message : String(error));
     } finally {
       set_submitting(false);
     }
   };
-
-  // 多企业：切到「选择企业」视图。
-  if (pending_ticket != null) {
-    return <TenantPicker login_ticket={pending_ticket} tenants={pending_tenants} />;
-  }
 
   return (
     <div className="login-page">
@@ -84,14 +61,14 @@ export function LoginPage() {
           size="large"
         >
           <Form.Item
-            name="account"
-            label={t('auth.account')}
-            rules={[{ required: true, whitespace: true, message: t('auth.account_required') }]}
+            name="domain"
+            label={t('auth.domain')}
+            rules={[{ required: true, pattern: /^\d{7}$/, message: t('auth.domain_required') }]}
           >
             <Input
-              prefix={<UserOutlined />}
+              prefix={<NumberOutlined />}
               autoComplete="username"
-              placeholder={t('auth.account_placeholder')}
+              placeholder={t('auth.domain_placeholder')}
             />
           </Form.Item>
 
@@ -121,9 +98,7 @@ export function LoginPage() {
         </Form>
       </div>
 
-      <p className="login-page__footer">
-        Mock 账号：admin / admin123（多企业）· member / member123（单企业）
-      </p>
+      <p className="login-page__footer">Mock：域标识 1000001 · 密码 admin123</p>
     </div>
   );
 }

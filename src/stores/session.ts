@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { SessionPayload, SessionUser, TenantOption } from '@/types/auth';
+import type { SessionPayload, SessionTenant, SessionUser } from '@/types/auth';
 
 /**
  * 会话态 —— access token 仅存内存（非持久化）。
@@ -9,7 +9,7 @@ import type { SessionPayload, SessionUser, TenantOption } from '@/types/auth';
 interface SessionStore {
   access_token: string | null;
   user: SessionUser | null;
-  tenants: TenantOption[];
+  tenant: SessionTenant | null;
   is_authenticated: boolean;
 
   set_session: (payload: SessionPayload) => void;
@@ -20,15 +20,15 @@ interface SessionStore {
 const initial_state = {
   access_token: null,
   user: null,
-  tenants: [],
+  tenant: null,
   is_authenticated: false,
 };
 
 export const use_session = create<SessionStore>((set) => ({
   ...initial_state,
 
-  set_session: ({ access_token, user, tenants }) =>
-    set({ access_token, user, tenants, is_authenticated: true }),
+  set_session: ({ access_token, user, tenant }) =>
+    set({ access_token, user, tenant, is_authenticated: true }),
 
   set_user: (user) => set({ user }),
 

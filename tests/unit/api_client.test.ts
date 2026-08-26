@@ -24,7 +24,13 @@ const session_payload = {
     scope: 'admin' as const,
     roles: [],
   },
-  tenants: [],
+  tenant: {
+    tenant_id: 't_1',
+    tenant_name: '示例科技',
+    domain: '1000001',
+    language: 'zh_CN' as const,
+    ui_language: 'zh_CN' as const,
+  },
 };
 
 describe('api client request —— 三条错误路径', () => {

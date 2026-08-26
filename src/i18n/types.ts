@@ -34,8 +34,9 @@ export interface Dict {
   'auth.password_placeholder': string;
   'auth.login': string;
   'auth.error_unknown': string;
-  'auth.select_tenant': string;
-  'auth.select_tenant_hint': string;
+  'auth.domain': string;
+  'auth.domain_required': string;
+  'auth.domain_placeholder': string;
   'auth.change_password_title': string;
   'auth.old_password': string;
   'auth.new_password': string;

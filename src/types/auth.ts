@@ -4,11 +4,11 @@ export type AuthScope = 'admin' | 'member';
 
 export type UILanguage = 'zh_CN' | 'en_US';
 
-/** 账号可访问的一个租户（企业），用于多企业选择。 */
-export interface TenantOption {
+/** 登录会话所属租户 —— 单租户（无多企业概念，登录账号即租户 domain）。 */
+export interface SessionTenant {
   tenant_id: string;
   tenant_name: string;
-  /** 7 位数字唯一码，Directory/User 双键作用域的第二键。 */
+  /** 7 位数字唯一码，登录账号。 */
   domain: string;
   language: UILanguage;
   ui_language: UILanguage;
@@ -26,7 +26,7 @@ export interface SessionUser {
 export interface SessionPayload {
   access_token: string;
   user: SessionUser;
-  tenants: TenantOption[];
+  tenant: SessionTenant;
 }
 
 /** token claims（解码后）—— 仅内存使用，不落盘。 */

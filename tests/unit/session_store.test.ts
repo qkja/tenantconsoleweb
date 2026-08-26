@@ -10,15 +10,13 @@ const session_payload = {
     scope: 'admin' as const,
     roles: ['tenant_admin'],
   },
-  tenants: [
-    {
-      tenant_id: 't_1',
-      tenant_name: '示例科技',
-      domain: '1000001',
-      language: 'zh_CN' as const,
-      ui_language: 'zh_CN' as const,
-    },
-  ],
+  tenant: {
+    tenant_id: 't_1',
+    tenant_name: '示例科技',
+    domain: '1000001',
+    language: 'zh_CN' as const,
+    ui_language: 'zh_CN' as const,
+  },
 };
 
 describe('session store', () => {
@@ -36,7 +34,7 @@ describe('session store', () => {
     const state = use_session.getState();
     expect(state.is_authenticated).toBe(true);
     expect(state.access_token).toBe('token');
-    expect(state.tenants).toHaveLength(1);
+    expect(state.tenant?.domain).toBe('1000001');
   });
 
   it('clear_session 回到初始态', () => {
@@ -46,5 +44,6 @@ describe('session store', () => {
     expect(state.is_authenticated).toBe(false);
     expect(state.access_token).toBeNull();
     expect(state.user).toBeNull();
+    expect(state.tenant).toBeNull();
   });
 });

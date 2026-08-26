@@ -6,7 +6,6 @@ import {
   login,
   logout,
   refresh_session,
-  select_tenant,
   set_user_password,
 } from '@/api/auth';
 import {
@@ -122,19 +121,12 @@ describe('organization api', () => {
 describe('auth api（契约 docs/auth-contract.md）', () => {
   beforeEach(() => request_mock.mockReset());
 
-  it('login / select-tenant / refresh / logout / profile / change-password / set-password', async () => {
+  it('login（账号=域标识）/ refresh / logout / profile / change-password / set-password', async () => {
     request_mock.mockResolvedValue({} as never);
-    await login({ account: 'admin', password: 'admin123' });
+    await login({ domain: '1000001', password: 'admin123' });
     expect(request_mock).toHaveBeenCalledWith('/authnexus/v1/auth/login', {
       method: 'POST',
-      body: { account: 'admin', password: 'admin123' },
-      skip_auth_refresh: true,
-    });
-
-    await select_tenant('ticket_1', 't_001');
-    expect(request_mock).toHaveBeenCalledWith('/authnexus/v1/auth/select-tenant', {
-      method: 'POST',
-      body: { login_ticket: 'ticket_1', tenant_id: 't_001' },
+      body: { domain: '1000001', password: 'admin123' },
       skip_auth_refresh: true,
     });
 

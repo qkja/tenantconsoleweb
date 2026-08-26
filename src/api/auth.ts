@@ -1,37 +1,25 @@
 import { request } from '@/api/client';
-import type { SessionPayload, SessionUser, TenantOption } from '@/types/auth';
+import type { SessionPayload, SessionUser } from '@/types/auth';
 
 /**
- * 认证接口 —— authnexussvr 为空壳（阶段 3 由 MSW 提供契约实现，待后端落地）。
- * 路径遵循契约文档 docs/auth-contract.md（POST /authnexus/v1/auth/...）。
+ * 认证接口 —— authnexussvr 为空壳（由 MSW 提供契约实现，待后端落地）。
+ * 路径遵循契约文档 docs/auth-contract.md。
+ * 登录模型：账号 = 租户 domain（7 位数字），无多企业选择。
  */
 
 export interface LoginParams {
-  account: string;
+  /** 租户域标识（7 位数字），即账号。 */
+  domain: string;
   password: string;
+  /** 成员账号（用户认证）；租户认证（管理员）不传 —— domain 即账号。 */
+  account?: string;
 }
 
-/** 登录返回：多企业 → tenants 列表待选；单企业 → 直接 session。 */
-export interface LoginResult {
-  login_ticket?: string;
-  tenants?: TenantOption[];
-  session?: SessionPayload;
-}
-
-export function login(params: LoginParams): Promise<LoginResult> {
-  // skip_auth_refresh：登录失败返回 1004 = 密码错误，不得被 401 自动刷新吞掉。
-  return request<LoginResult>('/authnexus/v1/auth/login', {
+export function login(params: LoginParams): Promise<SessionPayload> {
+  // skip_auth_refresh：登录失败返回 1004/1003 = 账号/企业错误，不得被 401 自动刷新吞掉。
+  return request<SessionPayload>('/authnexus/v1/auth/login', {
     method: 'POST',
     body: params,
-    skip_auth_refresh: true,
-  });
-}
-
-/** 多企业场景：凭 login_ticket + 选中的 tenant_id 换取正式会话。 */
-export function select_tenant(login_ticket: string, tenant_id: string): Promise<SessionPayload> {
-  return request<SessionPayload>('/authnexus/v1/auth/select-tenant', {
-    method: 'POST',
-    body: { login_ticket, tenant_id },
     skip_auth_refresh: true,
   });
 }

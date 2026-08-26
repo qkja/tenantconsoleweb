@@ -5,14 +5,16 @@
 
 ## 模型
 
-租户认证（管理员，scope=admin）与用户认证（成员，scope=member）**共用同一套登录**，由后端判定 scope。一账号可属多租户 → 「选择企业」页。
+**无多企业概念 —— 登录账号即租户 `domain`（7 位数字唯一码）**。登录即进入该租户的控制台，不存在「选择企业」。
 
 ```
-账号 + 密码
-  → POST /login → 多企业则返回 login_ticket + tenants[]；单企业直接返回 session
-  → 多企业：POST /select-tenant {login_ticket, tenant_id} → session
+域标识(domain) + 密码
+  → POST /login → 直接返回 session（scope 由后端判定）
   → 控制台：scope=admin 可进；scope=member 被守卫挡在管理后台外
 ```
+
+租户认证（管理员）：`{domain, password}`，domain 即账号。
+用户认证（成员）：`{domain, account, password}`（account 为成员账号，domain 标识所属租户）。
 
 ## Token 与存储（硬性安全要求）
 
@@ -30,15 +32,16 @@
 
 统一信封 `{code, msg, data}`；`code` 为字符串，`"0"` 表成功。业务错误走 **HTTP 200**。
 
-| #   | 方法 | 路径                                     | 请求                           | 成功 data                                              |
-| --- | ---- | ---------------------------------------- | ------------------------------ | ------------------------------------------------------ |
-| 1   | POST | `/api/authnexus/v1/auth/login`           | `{account, password}`          | 单企业 `{session}`；多企业 `{login_ticket, tenants[]}` |
-| 2   | POST | `/api/authnexus/v1/auth/select-tenant`   | `{login_ticket, tenant_id}`    | `{session}`                                            |
-| 3   | POST | `/api/authnexus/v1/auth/refresh`         | （cookie）                     | `{session}`                                            |
-| 4   | POST | `/api/authnexus/v1/auth/logout`          | —                              | `{}`                                                   |
-| 5   | GET  | `/api/authnexus/v1/auth/profile`         | —                              | `{user, permissions[]}`                                |
-| 6   | POST | `/api/authnexus/v1/auth/change-password` | `{old_password, new_password}` | `{}`                                                   |
-| 7   | POST | `/api/authnexus/v1/user/set-password`    | `{user_id, new_password}`      | `{}`                                                   |
+| #   | 方法 | 路径                                     | 请求                           | 成功 data               |
+| --- | ---- | ---------------------------------------- | ------------------------------ | ----------------------- |
+| 1   | POST | `/api/authnexus/v1/auth/login`           | `{domain, password, account?}` | `{session}`             |
+| 2   | POST | `/api/authnexus/v1/auth/refresh`         | （cookie）                     | `{session}`             |
+| 3   | POST | `/api/authnexus/v1/auth/logout`          | —                              | `{}`                    |
+| 4   | GET  | `/api/authnexus/v1/auth/profile`         | —                              | `{user, permissions[]}` |
+| 5   | POST | `/api/authnexus/v1/auth/change-password` | `{old_password, new_password}` | `{}`                    |
+| 6   | POST | `/api/authnexus/v1/user/set-password`    | `{user_id, new_password}`      | `{}`                    |
+
+> 无 `select-tenant`：登录账号即 domain，一次登录直接定租户。
 
 **session 形状**（snake_case）：
 
@@ -53,20 +56,18 @@
       "scope": "admin",
       "roles": ["tenant_admin"]
     },
-    "tenants": [
-      {
-        "tenant_id": "t_001",
-        "tenant_name": "示例科技",
-        "domain": "1000001",
-        "language": "zh_CN",
-        "ui_language": "zh_CN"
-      }
-    ]
+    "tenant": {
+      "tenant_id": "t_001",
+      "tenant_name": "示例科技",
+      "domain": "1000001",
+      "language": "zh_CN",
+      "ui_language": "zh_CN"
+    }
   }
 }
 ```
 
-**TenantOption 字段**：`tenant_id`、`tenant_name`、`domain`（7 位数字唯一码）、`language`（内容语言）、`ui_language`（UI 语言）。
+**session.tenant 字段**：`tenant_id`、`tenant_name`、`domain`（7 位数字唯一码，即登录账号）、`language`（内容语言）、`ui_language`（UI 语言）。
 
 ## 登录状态存储（认证服务两张表，用户指令）
 
