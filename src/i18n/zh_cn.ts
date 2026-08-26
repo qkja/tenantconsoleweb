@@ -78,6 +78,27 @@ export const zh_cn: Dict = {
   'member.primary_org': '所属部门',
   'member.delete_confirm': '确认删除该成员？',
 
+  /* 安全组 */
+  'security_group.create': '新建安全组',
+  'security_group.edit': '编辑安全组',
+  'security_group.name': '名称',
+  'security_group.name_required': '请输入名称',
+  'security_group.code': '编码',
+  'security_group.description': '描述',
+  'security_group.delete_confirm': '确认删除该安全组？',
+
+  /* 企业信息 */
+  'tenant.company_profile': '企业信息',
+  'tenant.name': '企业名称',
+  'tenant.code': '企业编码',
+  'tenant.domain': '域标识',
+  'tenant.contact_name': '联系人',
+  'tenant.contact_phone': '联系电话',
+  'tenant.contact_email': '联系邮箱',
+  'tenant.status': '状态',
+  'tenant.remark': '备注',
+  'tenant.created_at': '创建时间',
+
   /* 通用动作 */
   'common.placeholder': '暂无数据',
   'common.retry': '重试',

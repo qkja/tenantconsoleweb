@@ -79,6 +79,27 @@ export const en_us: Dict = {
   'member.primary_org': 'Department',
   'member.delete_confirm': 'Delete this member?',
 
+  /* Security groups */
+  'security_group.create': 'New security group',
+  'security_group.edit': 'Edit security group',
+  'security_group.name': 'Name',
+  'security_group.name_required': 'Please enter a name',
+  'security_group.code': 'Code',
+  'security_group.description': 'Description',
+  'security_group.delete_confirm': 'Delete this security group?',
+
+  /* Company profile */
+  'tenant.company_profile': 'Company Profile',
+  'tenant.name': 'Company name',
+  'tenant.code': 'Company code',
+  'tenant.domain': 'Domain',
+  'tenant.contact_name': 'Contact',
+  'tenant.contact_phone': 'Phone',
+  'tenant.contact_email': 'Email',
+  'tenant.status': 'Status',
+  'tenant.remark': 'Remark',
+  'tenant.created_at': 'Created at',
+
   /* Common actions */
   'common.placeholder': 'No data',
   'common.retry': 'Retry',

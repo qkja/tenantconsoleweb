@@ -81,6 +81,27 @@ export interface Dict {
   'member.primary_org': string;
   'member.delete_confirm': string;
 
+  /* 安全组 */
+  'security_group.create': string;
+  'security_group.edit': string;
+  'security_group.name': string;
+  'security_group.name_required': string;
+  'security_group.code': string;
+  'security_group.description': string;
+  'security_group.delete_confirm': string;
+
+  /* 企业信息 */
+  'tenant.company_profile': string;
+  'tenant.name': string;
+  'tenant.code': string;
+  'tenant.domain': string;
+  'tenant.contact_name': string;
+  'tenant.contact_phone': string;
+  'tenant.contact_email': string;
+  'tenant.status': string;
+  'tenant.remark': string;
+  'tenant.created_at': string;
+
   /* 通用动作 */
   'common.placeholder': string;
   'common.retry': string;

@@ -1,0 +1,3 @@
+.security-group-page__danger {
+  color: var(--color-error);
+}
