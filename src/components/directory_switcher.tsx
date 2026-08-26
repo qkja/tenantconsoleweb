@@ -1,30 +1,28 @@
 import { DownOutlined, FolderOpenOutlined } from '@ant-design/icons';
 import { Button, Dropdown, Space } from 'antd';
+import { use_directory_list } from '@/hooks/queries/use_directory_list';
 import { use_i18n } from '@/lib/i18n';
 import { use_scope } from '@/stores/scope';
+import './directory_switcher.css';
 
 /**
  * 顶栏目录域切换器（类比云控制台「地域」）。
  * 目录域属于租户作用域：切换租户后自动清空，需重新选择。
- * 阶段 4 用 use_directory_list 真实数据替换 PLACEHOLDER_DOMAINS。
+ * 数据源 = 真实网关目录域列表（use_directory_list）。
  */
-const PLACEHOLDER_DOMAINS = [
-  { domain: '1000001', name: '主目录' },
-  { domain: '1000002', name: '分目录 B' },
-];
-
 export function DirectorySwitcher() {
   const { t } = use_i18n();
   const { tenant_id, directory_domain, set_directory_domain } = use_scope();
+  const { data: directories = [] } = use_directory_list();
 
-  const current = PLACEHOLDER_DOMAINS.find((item) => item.domain === directory_domain);
+  const current = directories.find((item) => item.domain === directory_domain);
 
   return (
     <Dropdown
       trigger={['click']}
-      disabled={tenant_id == null}
+      disabled={tenant_id == null || directories.length === 0}
       menu={{
-        items: PLACEHOLDER_DOMAINS.map((item) => ({
+        items: directories.map((item) => ({
           key: item.domain,
           label: item.name,
           icon: <FolderOpenOutlined />,

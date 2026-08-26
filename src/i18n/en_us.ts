@@ -40,9 +40,38 @@ export const en_us: Dict = {
   'auth.confirm_mismatch': 'Passwords do not match',
   'auth.password_updated': 'Password updated',
 
-  /* Common */
+  /* Directory */
+  'directory.create': 'New directory',
+  'directory.edit': 'Edit directory',
+  'directory.name': 'Name',
+  'directory.name_required': 'Please enter a name',
+  'directory.domain': 'Domain',
+  'directory.domain_required': 'Enter a 7-digit domain code',
+  'directory.domain_hint': '7-digit unique code, cannot change after creation',
+  'directory.description': 'Description',
+  'directory.created_at': 'Created at',
+  'directory.delete_confirm':
+    'Delete this directory? Its organizations and members will be removed too',
+
+  /* Organization */
+  'organization.title': 'Organization',
+  'organization.create_root': 'New top-level department',
+  'organization.create_child': 'New sub-department',
+  'organization.edit': 'Edit department',
+  'organization.parent': 'Parent',
+  'organization.delete_confirm': 'Delete this department? Its children will be removed too',
+  'organization.no_selection': 'Select a department on the left to view details',
+  'organization.member_count': 'Direct members',
+
+  /* Common actions */
   'common.placeholder': 'No data',
   'common.retry': 'Retry',
+  'common.save': 'Save',
+  'common.cancel': 'Cancel',
+  'common.delete': 'Delete',
+  'common.actions': 'Actions',
+  'common.saved': 'Saved',
+  'common.deleted': 'Deleted',
   'feature.coming_soon': 'Coming soon',
 
   /* Overview */

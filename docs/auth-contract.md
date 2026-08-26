@@ -68,6 +68,41 @@
 
 **TenantOption 字段**：`tenant_id`、`tenant_name`、`domain`（7 位数字唯一码）、`language`（内容语言）、`ui_language`（UI 语言）。
 
+## 登录状态存储（认证服务两张表，用户指令）
+
+认证服务须**两张表分别记录租户（管理员）与用户（成员）的登录状态**。
+refresh token 校验、单端登录、强制下线、登录审计都查表 —— 不能只用无状态 JWT（服务端无法吊销）。
+
+### 1. `tenant_login_state` —— 租户（管理员）登录状态
+
+| 字段                  | 说明                             |
+| --------------------- | -------------------------------- |
+| tenant_id             | 租户 ID（复合主键之一）          |
+| account               | 管理员账号                       |
+| login_ticket          | 多企业选择阶段临时票据（可空）   |
+| refresh_token_hash    | refresh token 哈希（不存明文）   |
+| login_at / expires_at | 登录 / 过期时间                  |
+| ip / user_agent       | 登录设备（审计）                 |
+| status                | `active` / `expired` / `revoked` |
+
+### 2. `user_login_state` —— 用户（成员）登录状态
+
+| 字段                  | 说明                             |
+| --------------------- | -------------------------------- |
+| user_id               | 成员 ID（复合主键之一）          |
+| tenant_id             | 所属租户                         |
+| refresh_token_hash    | refresh token 哈希               |
+| login_at / expires_at | 登录 / 过期时间                  |
+| ip / user_agent       | 登录设备                         |
+| status                | `active` / `expired` / `revoked` |
+
+**设计要点**：
+
+- **分表原因**：scope 不同（admin/member）、生命周期与吊销维度不同；管理员被踢出企业与成员离职互不干扰
+- 同 `(user_id, tenant_id)` 新登录是否作废旧会话（单端/多端）由后端策略定
+- logout / 改密 / 强制下线 = 对应行 `status → revoked`（refresh 校验即拒）
+- MSW 契约不落地这两张表（Mock 无状态），仅作前端联调；真实实现以本设计为准
+
 ## 错误码（gobase 封闭集合，禁止业务自定义新码）
 
 | code | 含义       | 场景                                      |

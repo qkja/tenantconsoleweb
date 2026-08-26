@@ -40,9 +40,37 @@ export const zh_cn: Dict = {
   'auth.confirm_mismatch': '两次输入的密码不一致',
   'auth.password_updated': '密码修改成功',
 
-  /* 通用 */
+  /* 目录域 */
+  'directory.create': '新建目录域',
+  'directory.edit': '编辑目录域',
+  'directory.name': '名称',
+  'directory.name_required': '请输入名称',
+  'directory.domain': '域标识',
+  'directory.domain_required': '请输入 7 位数字域标识',
+  'directory.domain_hint': '7 位数字唯一码，创建后不可修改',
+  'directory.description': '描述',
+  'directory.created_at': '创建时间',
+  'directory.delete_confirm': '确认删除该目录域？将连带删除其下组织与成员',
+
+  /* 组织架构 */
+  'organization.title': '组织架构',
+  'organization.create_root': '新建顶级部门',
+  'organization.create_child': '新建子部门',
+  'organization.edit': '编辑部门',
+  'organization.parent': '上级部门',
+  'organization.delete_confirm': '确认删除该部门？将连带删除其子部门',
+  'organization.no_selection': '请选择左侧部门查看详情',
+  'organization.member_count': '直属成员',
+
+  /* 通用动作 */
   'common.placeholder': '暂无数据',
   'common.retry': '重试',
+  'common.save': '保存',
+  'common.cancel': '取消',
+  'common.delete': '删除',
+  'common.actions': '操作',
+  'common.saved': '已保存',
+  'common.deleted': '已删除',
   'feature.coming_soon': '功能建设中',
 
   /* 概览 */

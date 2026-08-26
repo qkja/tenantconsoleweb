@@ -1,0 +1,19 @@
+.organization-page {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.organization-page__tree-card {
+  position: sticky;
+  top: calc(var(--top-bar-height) + var(--space-lg));
+}
+
+.organization-page__detail-card {
+  min-height: 480px;
+}
+
+.organization-page__empty {
+  margin-top: 160px;
+}

@@ -43,9 +43,37 @@ export interface Dict {
   'auth.confirm_mismatch': string;
   'auth.password_updated': string;
 
-  /* 通用 */
+  /* 目录域 */
+  'directory.create': string;
+  'directory.edit': string;
+  'directory.name': string;
+  'directory.name_required': string;
+  'directory.domain': string;
+  'directory.domain_required': string;
+  'directory.domain_hint': string;
+  'directory.description': string;
+  'directory.created_at': string;
+  'directory.delete_confirm': string;
+
+  /* 组织架构 */
+  'organization.title': string;
+  'organization.create_root': string;
+  'organization.create_child': string;
+  'organization.edit': string;
+  'organization.parent': string;
+  'organization.delete_confirm': string;
+  'organization.no_selection': string;
+  'organization.member_count': string;
+
+  /* 通用动作 */
   'common.placeholder': string;
   'common.retry': string;
+  'common.save': string;
+  'common.cancel': string;
+  'common.delete': string;
+  'common.actions': string;
+  'common.saved': string;
+  'common.deleted': string;
   'feature.coming_soon': string;
 
   /* 概览 */

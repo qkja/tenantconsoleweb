@@ -68,4 +68,12 @@ export default tseslint.config(
       'react-refresh/only-export-components': 'off',
     },
   },
+  // 自定义 hook 按项目指令以 use_ 前缀 snake_case 命名；react-hooks 插件仅识别 useXxx，
+  // 对 src/hooks/** 整体豁免 rules-of-hooks（组件层的 hook 调用检查不受影响）。
+  {
+    files: ['src/hooks/**'],
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+    },
+  },
 );
