@@ -6,16 +6,23 @@
 export interface TenantInfo {
   id: string;
   name: string;
-  code: string;
   domain: string;
   contactName: string;
   contactPhone: string;
   contactEmail: string;
-  /** paid / trial / internal。 */
+  /** trial / paid / suspended / deleted（生命周期状态机）。 */
   status: string;
   remark: string;
   createTime: string;
   updateTime: string;
+  /** 租户管理员（账号元数据，密码凭证在认证服务）。 */
+  admins?: TenantAdminInfo[];
+}
+
+export interface TenantAdminInfo {
+  account: string;
+  displayName: string;
+  status: string;
 }
 
 export interface CreateTenantInput {
@@ -23,4 +30,11 @@ export interface CreateTenantInput {
   contactName: string;
   contactPhone: string;
   contactEmail: string;
+}
+
+/** 添加管理员请求体（契约 camelCase：displayName 在契约文件定义以豁免命名规则）。 */
+export interface AddAdminParams {
+  account: string;
+  displayName: string;
+  password: string;
 }

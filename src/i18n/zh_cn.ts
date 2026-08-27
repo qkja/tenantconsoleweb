@@ -92,7 +92,6 @@ export const zh_cn: Dict = {
   /* 企业信息 */
   'tenant.company_profile': '企业信息',
   'tenant.name': '企业名称',
-  'tenant.code': '企业编码',
   'tenant.domain': '域标识',
   'tenant.contact_name': '联系人',
   'tenant.contact_phone': '联系电话',
@@ -100,6 +99,22 @@ export const zh_cn: Dict = {
   'tenant.status': '状态',
   'tenant.remark': '备注',
   'tenant.created_at': '创建时间',
+
+  /* 管理员管理 */
+  'admin.title': '管理员管理',
+  'admin.add': '添加管理员',
+  'admin.account': '管理员账号',
+  'admin.account_required': '请输入管理员账号',
+  'admin.display_name': '显示名',
+  'admin.display_name_required': '请输入显示名',
+  'admin.password': '初始密码',
+  'admin.password_required': '请输入初始密码',
+  'admin.status': '状态',
+  'admin.disable_confirm': '确认禁用该管理员？禁用后其无法登录',
+  'admin.enable_confirm': '确认启用该管理员？',
+  'admin.disabled': '已禁用',
+  'admin.enabled': '已启用',
+  'admin.added': '管理员已添加',
 
   /* 通用动作 */
   'common.placeholder': '暂无数据',
@@ -110,6 +125,8 @@ export const zh_cn: Dict = {
   'common.actions': '操作',
   'common.saved': '已保存',
   'common.deleted': '已删除',
+  'common.disable': '禁用',
+  'common.enable': '启用',
   'feature.coming_soon': '功能建设中',
 
   /* 概览 */

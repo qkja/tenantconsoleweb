@@ -93,7 +93,6 @@ export const en_us: Dict = {
   /* Company profile */
   'tenant.company_profile': 'Company Profile',
   'tenant.name': 'Company name',
-  'tenant.code': 'Company code',
   'tenant.domain': 'Domain',
   'tenant.contact_name': 'Contact',
   'tenant.contact_phone': 'Phone',
@@ -101,6 +100,22 @@ export const en_us: Dict = {
   'tenant.status': 'Status',
   'tenant.remark': 'Remark',
   'tenant.created_at': 'Created at',
+
+  /* Admins */
+  'admin.title': 'Admins',
+  'admin.add': 'Add admin',
+  'admin.account': 'Admin account',
+  'admin.account_required': 'Please enter the admin account',
+  'admin.display_name': 'Display name',
+  'admin.display_name_required': 'Please enter a display name',
+  'admin.password': 'Initial password',
+  'admin.password_required': 'Please enter the initial password',
+  'admin.status': 'Status',
+  'admin.disable_confirm': 'Disable this admin? They can no longer sign in',
+  'admin.enable_confirm': 'Enable this admin?',
+  'admin.disabled': 'Admin disabled',
+  'admin.enabled': 'Admin enabled',
+  'admin.added': 'Admin added',
 
   /* Common actions */
   'common.placeholder': 'No data',
@@ -111,6 +126,8 @@ export const en_us: Dict = {
   'common.actions': 'Actions',
   'common.saved': 'Saved',
   'common.deleted': 'Deleted',
+  'common.disable': 'Disable',
+  'common.enable': 'Enable',
   'feature.coming_soon': 'Coming soon',
 
   /* Overview */

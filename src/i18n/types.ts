@@ -95,7 +95,6 @@ export interface Dict {
   /* 企业信息 */
   'tenant.company_profile': string;
   'tenant.name': string;
-  'tenant.code': string;
   'tenant.domain': string;
   'tenant.contact_name': string;
   'tenant.contact_phone': string;
@@ -103,6 +102,22 @@ export interface Dict {
   'tenant.status': string;
   'tenant.remark': string;
   'tenant.created_at': string;
+
+  /* 管理员管理 */
+  'admin.title': string;
+  'admin.add': string;
+  'admin.account': string;
+  'admin.account_required': string;
+  'admin.display_name': string;
+  'admin.display_name_required': string;
+  'admin.password': string;
+  'admin.password_required': string;
+  'admin.status': string;
+  'admin.disable_confirm': string;
+  'admin.enable_confirm': string;
+  'admin.disabled': string;
+  'admin.enabled': string;
+  'admin.added': string;
 
   /* 通用动作 */
   'common.placeholder': string;
@@ -113,6 +128,8 @@ export interface Dict {
   'common.actions': string;
   'common.saved': string;
   'common.deleted': string;
+  'common.disable': string;
+  'common.enable': string;
   'feature.coming_soon': string;
 
   /* 概览 */
