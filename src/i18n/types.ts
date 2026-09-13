@@ -13,9 +13,14 @@ export interface Dict {
   'nav.member': string;
   'nav.user_role': string;
   'nav.tenant': string;
+  'nav.tenant_role': string;
+  'nav.tenant_admin': string;
+  'nav.sync': string;
+  'nav.sync_records': string;
   'contacts.group': string;
   'security.group': string;
   'company.group': string;
+  'integration.group': string;
 
   /* 顶栏 */
   'topbar.tenant_switcher': string;
@@ -127,6 +132,112 @@ export interface Dict {
   'account.saved': string;
   'account.rename_warning': string;
 
+  /* 租户管理角色 */
+  'tenant_role.create': string;
+  'tenant_role.edit': string;
+  'tenant_role.name': string;
+  'tenant_role.name_required': string;
+  'tenant_role.code': string;
+  'tenant_role.description': string;
+  'tenant_role.status': string;
+  'tenant_role.built_in': string;
+  'tenant_role.built_in_true': string;
+  'tenant_role.built_in_false': string;
+  'tenant_role.page_codes': string;
+  'tenant_role.scope_organization': string;
+  'tenant_role.scope_directory': string;
+  'tenant_role.scope_required': string;
+  'tenant_role.scope_descendants_hint': string;
+  'tenant_role.delete_confirm': string;
+  'tenant_role.disable_confirm': string;
+  'tenant_role.enable_confirm': string;
+  'tenant_role.built_in_protected': string;
+  'tenant_role.created_at': string;
+
+  /* 租户管理员 */
+  'tenant_admin.create': string;
+  'tenant_admin.edit': string;
+  'tenant_admin.name': string;
+  'tenant_admin.name_required': string;
+  'tenant_admin.name_hint': string;
+  'tenant_admin.code': string;
+  'tenant_admin.email': string;
+  'tenant_admin.phone': string;
+  'tenant_admin.country_code': string;
+  'tenant_admin.status': string;
+  'tenant_admin.password': string;
+  'tenant_admin.password_required': string;
+  'tenant_admin.roles': string;
+  'tenant_admin.bind_roles': string;
+  'tenant_admin.bind_roles_hint': string;
+  'tenant_admin.must_change_password': string;
+  'tenant_admin.max_login_failures': string;
+  'tenant_admin.login_fail_window': string;
+  'tenant_admin.login_fail_window_unit': string;
+  'tenant_admin.is_locked': string;
+  'tenant_admin.locked': string;
+  'tenant_admin.reset_password': string;
+  'tenant_admin.reset_confirm': string;
+  'tenant_admin.new_password': string;
+  'tenant_admin.new_password_hint': string;
+  'tenant_admin.is_initial': string;
+  'tenant_admin.last_login_at': string;
+  'tenant_admin.delete_confirm': string;
+  'tenant_admin.disable_confirm': string;
+  'tenant_admin.enable_confirm': string;
+  'tenant_admin.created_at': string;
+
+  /* 同步配置 */
+  'sync.title': string;
+  'sync.select_directory': string;
+  'sync.no_directory_hint': string;
+  'sync.provider': string;
+  'sync.server_url': string;
+  'sync.server_url_required': string;
+  'sync.base_dn': string;
+  'sync.bind_dn': string;
+  'sync.bind_password': string;
+  'sync.bind_password_hint': string;
+  'sync.external_id_field': string;
+  'sync.external_id_field_required': string;
+  'sync.external_id_field_hint': string;
+  'sync.field_mappings': string;
+  'sync.external_field': string;
+  'sync.local_field': string;
+  'sync.add_mapping': string;
+  'sync.sync_interval_minutes': string;
+  'sync.sync_interval_hint': string;
+  'sync.enabled': string;
+  'sync.scope_organization': string;
+  'sync.scope_user': string;
+  'sync.scope_user_role': string;
+  'sync.trigger': string;
+  'sync.trigger_confirm': string;
+  'sync.last_sync_at': string;
+  'sync.last_sync_status': string;
+  'sync.one_way_hint': string;
+
+  /* 同步记录 */
+  'sync_records.title': string;
+  'sync_records.code': string;
+  'sync_records.directory': string;
+  'sync_records.trigger_type': string;
+  'sync_records.trigger_manual': string;
+  'sync_records.trigger_scheduled': string;
+  'sync_records.status': string;
+  'sync_records.started_at': string;
+  'sync_records.finished_at': string;
+  'sync_records.total_count': string;
+  'sync_records.success_count': string;
+  'sync_records.failed_count': string;
+  'sync_records.view_failures': string;
+  'sync_records.failures_title': string;
+  'sync_records.failure_code': string;
+  'sync_records.user_code': string;
+  'sync_records.external_id': string;
+  'sync_records.reason': string;
+  'sync_records.created_at': string;
+
   /* 通用动作 */
   'common.placeholder': string;
   'common.retry': string;
@@ -139,6 +250,7 @@ export interface Dict {
   'common.disable': string;
   'common.enable': string;
   'common.email_invalid': string;
+  'common.copy': string;
   'feature.coming_soon': string;
 
   /* 概览 */

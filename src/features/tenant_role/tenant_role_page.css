@@ -1,0 +1,12 @@
+.tenant-role-page {
+  padding: 16px;
+}
+
+.tenant-role-page__danger {
+  color: var(--color-error, #dc2626);
+}
+
+.tenant-role-page__disabled {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: not-allowed;
+}

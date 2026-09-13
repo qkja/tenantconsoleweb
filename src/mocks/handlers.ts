@@ -2,7 +2,10 @@ import type { HttpHandler } from 'msw';
 import { auth_handlers } from '@/mocks/handlers/auth';
 import { directory_handlers } from '@/mocks/handlers/directory';
 import { organization_handlers } from '@/mocks/handlers/organization';
+import { sync_handlers } from '@/mocks/handlers/sync';
+import { tenant_admin_handlers } from '@/mocks/handlers/tenant_admin';
 import { tenant_handlers } from '@/mocks/handlers/tenant';
+import { tenant_role_handlers } from '@/mocks/handlers/tenant_role';
 import { user_handlers } from '@/mocks/handlers/user';
 import { user_role_handlers } from '@/mocks/handlers/user_role';
 
@@ -16,4 +19,7 @@ export const handlers: HttpHandler[] = [
   ...user_handlers,
   ...user_role_handlers,
   ...tenant_handlers,
+  ...tenant_role_handlers,
+  ...tenant_admin_handlers,
+  ...sync_handlers,
 ];

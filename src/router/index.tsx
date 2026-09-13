@@ -28,6 +28,20 @@ const UserRolePage = lazy(() =>
 const TenantPage = lazy(() =>
   import('@/features/tenant/tenant_page').then((m) => ({ default: m.TenantPage })),
 );
+const TenantRolePage = lazy(() =>
+  import('@/features/tenant_role/tenant_role_page').then((m) => ({ default: m.TenantRolePage })),
+);
+const TenantAdminPage = lazy(() =>
+  import('@/features/tenant_admin/tenant_admin_page').then((m) => ({
+    default: m.TenantAdminPage,
+  })),
+);
+const SyncConfigPage = lazy(() =>
+  import('@/features/sync/sync_config_page').then((m) => ({ default: m.SyncConfigPage })),
+);
+const SyncRecordPage = lazy(() =>
+  import('@/features/sync/sync_record_page').then((m) => ({ default: m.SyncRecordPage })),
+);
 const AdminProfile = lazy(() =>
   import('@/features/auth/admin_profile').then((m) => ({ default: m.AdminProfile })),
 );
@@ -62,7 +76,11 @@ export const router = createBrowserRouter([
       { path: 'organization', element: <OrganizationPage /> },
       { path: 'member', element: <MemberPage /> },
       { path: 'user-role', element: <UserRolePage /> },
+      { path: 'tenant-role', element: <TenantRolePage /> },
+      { path: 'tenant-admin', element: <TenantAdminPage /> },
       { path: 'tenant', element: <TenantPage /> },
+      { path: 'sync', element: <SyncConfigPage /> },
+      { path: 'sync-records', element: <SyncRecordPage /> },
       { path: 'admin-profile', element: <AdminProfile /> },
       { path: 'change-password', element: <ChangePassword /> },
     ],

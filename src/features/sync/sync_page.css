@@ -1,0 +1,25 @@
+.sync-page {
+  padding: 16px;
+}
+
+.sync-page__hint {
+  color: var(--color-text-secondary, #5c6672);
+}
+
+.sync-page__meta {
+  margin-bottom: 16px;
+}
+
+.sync-page__dir-select {
+  min-width: 200px;
+}
+
+.sync-page__status-select {
+  min-width: 140px;
+}
+
+.sync-page__mappings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

@@ -1,0 +1,15 @@
+.tenant-admin-page {
+  padding: 16px;
+}
+
+.tenant-admin-page__danger {
+  color: var(--color-error, #dc2626);
+}
+
+.tenant-admin-page__hint {
+  color: var(--color-text-secondary, #5c6672);
+}
+
+.tenant-admin-page__role-select {
+  width: 100%;
+}

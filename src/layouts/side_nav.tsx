@@ -2,7 +2,11 @@ import {
   ApartmentOutlined,
   AppstoreOutlined,
   ClusterOutlined,
+  HistoryOutlined,
   IdcardOutlined,
+  SafetyCertificateOutlined,
+  SolutionOutlined,
+  SyncOutlined,
   TagsOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
@@ -35,6 +39,16 @@ export function SideNav() {
       label: t('security.group'),
       children: [
         { key: '/user-role', icon: <TagsOutlined />, label: t('nav.user_role') },
+        { key: '/tenant-role', icon: <SafetyCertificateOutlined />, label: t('nav.tenant_role') },
+        { key: '/tenant-admin', icon: <SolutionOutlined />, label: t('nav.tenant_admin') },
+      ],
+    },
+    {
+      type: 'group',
+      label: t('integration.group'),
+      children: [
+        { key: '/sync', icon: <SyncOutlined />, label: t('nav.sync') },
+        { key: '/sync-records', icon: <HistoryOutlined />, label: t('nav.sync_records') },
       ],
     },
     {

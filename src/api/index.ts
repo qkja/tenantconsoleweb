@@ -7,3 +7,6 @@ export * from '@/api/organization';
 export * from '@/api/user';
 export * from '@/api/user_role';
 export * from '@/api/tenant';
+export * from '@/api/tenant_role';
+export * from '@/api/tenant_admin';
+export * from '@/api/sync';
