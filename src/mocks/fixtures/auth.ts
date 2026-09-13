@@ -1,79 +1,30 @@
-import type { SessionTenant, SessionUser } from '@/types/auth';
+import type { SessionPayload } from '@/types/auth';
 
-/** MSW 认证夹具 —— 契约实现，非真实数据。登录账号 = 租户 domain。 */
-
-export const mock_tenants: SessionTenant[] = [
-  {
-    tenant_id: 't_001',
-    tenant_name: '示例科技有限公司',
-    domain: '1000001',
-    language: 'zh_CN',
-    ui_language: 'zh_CN',
-  },
-  {
-    tenant_id: 't_002',
-    tenant_name: 'Acme Cloud Inc.',
-    domain: '1000002',
-    language: 'en_US',
-    ui_language: 'en_US',
-  },
-];
-
-/** 租户认证（管理员）：domain 即账号。 */
-export interface MockTenantAccount {
-  domain: string;
+/** MSW 认证夹具 —— 登录账号 = 租户管理员名称（name）。 */
+export interface MockTenantAdminAccount {
+  name: string;
   password: string;
-  user: SessionUser;
+  tenant_code: string;
+  must_change_password: boolean;
 }
 
-export const mock_tenant_accounts: MockTenantAccount[] = [
+export const mock_tenant_admin_accounts: MockTenantAdminAccount[] = [
   {
-    domain: '1000001',
+    name: 'admin',
     password: 'admin123',
-    user: {
-      user_id: 'u_001',
-      username: 'admin',
-      display_name: '系统管理员',
-      scope: 'admin',
-      roles: ['tenant_admin'],
-    },
-  },
-  {
-    domain: '1000002',
-    password: 'admin123',
-    user: {
-      user_id: 'u_003',
-      username: 'admin',
-      display_name: 'Acme Admin',
-      scope: 'admin',
-      roles: ['tenant_admin'],
-    },
+    tenant_code: 'tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP',
+    must_change_password: false,
   },
 ];
 
-/** 用户认证（成员）：domain + account + password。 */
-export interface MockUserAccount {
-  domain: string;
-  account: string;
-  password: string;
-  user: SessionUser;
-}
-
-export const mock_user_accounts: MockUserAccount[] = [
-  {
-    domain: '1000001',
-    account: 'zhangwei',
-    password: 'member123',
-    user: {
-      user_id: 'u_002',
-      username: 'zhangwei',
-      display_name: '张伟',
-      scope: 'member',
-      roles: ['member'],
-    },
-  },
-];
-
-export function tenant_of(domain: string): SessionTenant | undefined {
-  return mock_tenants.find((tenant) => tenant.domain === domain);
+export function build_session(name: string): SessionPayload {
+  const account = mock_tenant_admin_accounts.find((item) => item.name === name);
+  return {
+    access_token: `mock_jwt_${name}_${Date.now().toString(36)}`,
+    refresh_token: `mock_refresh_${name}`,
+    expires_in: 7200,
+    token_type: 'Bearer',
+    tenant_code: account?.tenant_code ?? '',
+    must_change_password: account?.must_change_password ?? false,
+  };
 }

@@ -3,7 +3,7 @@ import {
   AppstoreOutlined,
   ClusterOutlined,
   IdcardOutlined,
-  SafetyCertificateOutlined,
+  TagsOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, type MenuProps } from 'antd';
@@ -34,11 +34,7 @@ export function SideNav() {
       type: 'group',
       label: t('security.group'),
       children: [
-        {
-          key: '/security-group',
-          icon: <SafetyCertificateOutlined />,
-          label: t('nav.security_group'),
-        },
+        { key: '/user-role', icon: <TagsOutlined />, label: t('nav.user_role') },
       ],
     },
     {

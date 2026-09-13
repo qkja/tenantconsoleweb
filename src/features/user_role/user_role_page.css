@@ -1,0 +1,13 @@
+.user-role-page__danger {
+  color: var(--color-error, #dc2626);
+}
+
+.user-role-page__add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.user-role-page__select {
+  flex: 1;
+}

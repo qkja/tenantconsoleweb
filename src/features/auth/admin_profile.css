@@ -1,0 +1,8 @@
+.admin-profile {
+  max-width: 720px;
+}
+
+.admin-profile__card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}

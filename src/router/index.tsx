@@ -22,13 +22,14 @@ const OrganizationPage = lazy(() =>
 const MemberPage = lazy(() =>
   import('@/features/member/member_page').then((m) => ({ default: m.MemberPage })),
 );
-const SecurityGroupPage = lazy(() =>
-  import('@/features/security_group/security_group_page').then((m) => ({
-    default: m.SecurityGroupPage,
-  })),
+const UserRolePage = lazy(() =>
+  import('@/features/user_role/user_role_page').then((m) => ({ default: m.UserRolePage })),
 );
 const TenantPage = lazy(() =>
   import('@/features/tenant/tenant_page').then((m) => ({ default: m.TenantPage })),
+);
+const AdminProfile = lazy(() =>
+  import('@/features/auth/admin_profile').then((m) => ({ default: m.AdminProfile })),
 );
 const ChangePassword = lazy(() =>
   import('@/features/auth/change_password').then((m) => ({ default: m.ChangePassword })),
@@ -36,7 +37,7 @@ const ChangePassword = lazy(() =>
 
 /**
  * 路由表。/login 公开，控制台整体包 RequireAuth 守卫。
- * 全部业务页已接入：概览/目录域/组织架构/成员/安全组/企业信息/改密。
+ * 全部业务页已接入：概览/目录域/组织架构/成员/用户角色/企业信息/我的账号/改密。
  */
 export const router = createBrowserRouter([
   {
@@ -60,8 +61,9 @@ export const router = createBrowserRouter([
       { path: 'directory', element: <DirectoryPage /> },
       { path: 'organization', element: <OrganizationPage /> },
       { path: 'member', element: <MemberPage /> },
-      { path: 'security-group', element: <SecurityGroupPage /> },
+      { path: 'user-role', element: <UserRolePage /> },
       { path: 'tenant', element: <TenantPage /> },
+      { path: 'admin-profile', element: <AdminProfile /> },
       { path: 'change-password', element: <ChangePassword /> },
     ],
   },

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { SessionPayload, SessionTenant, SessionUser } from '@/types/auth';
+import type { SessionPayload } from '@/types/auth';
 
 /**
  * 会话态 —— access token 仅存内存（非持久化）。
@@ -8,29 +8,30 @@ import type { SessionPayload, SessionTenant, SessionUser } from '@/types/auth';
  */
 interface SessionStore {
   access_token: string | null;
-  user: SessionUser | null;
-  tenant: SessionTenant | null;
+  tenant_code: string | null;
+  must_change_password: boolean;
   is_authenticated: boolean;
 
   set_session: (payload: SessionPayload) => void;
-  set_user: (user: SessionUser) => void;
+  set_access_token: (token: string) => void;
   clear_session: () => void;
 }
 
 const initial_state = {
   access_token: null,
-  user: null,
-  tenant: null,
+  tenant_code: null,
+  must_change_password: false,
   is_authenticated: false,
 };
 
 export const use_session = create<SessionStore>((set) => ({
   ...initial_state,
 
-  set_session: ({ access_token, user, tenant }) =>
-    set({ access_token, user, tenant, is_authenticated: true }),
+  set_session: ({ access_token, tenant_code, must_change_password }) =>
+    set({ access_token, tenant_code, must_change_password, is_authenticated: true }),
 
-  set_user: (user) => set({ user }),
+  // 刷新接口只返回 TokenData（不含 tenant_code/must_change_password），仅更新令牌。
+  set_access_token: (access_token) => set({ access_token }),
 
   clear_session: () => set(initial_state),
 }));

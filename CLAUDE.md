@@ -29,18 +29,21 @@ React 19 · TypeScript 5.9 · Vite 8 · antd 5.29 · ProComponents（pro-table/p
 | CSS 类 / 自定义属性 | `kebab-case`                       | `--color-surface`                  |
 
 **例外（库强制 camelCase，保留原样）**：antd `dataIndex`、TanStack `queryKey`、React `onClick`。ESLint 仅对自有代码生效。
-**例外（契约强制 camelCase）**：`src/types/tenantmanager.ts` —— protojson 大小写敏感，写错**静默丢字段**。该文件头有 eslint-disable 注释。
 
 ## 后端契约要点（不遵守必出 bug）
 
 1. **业务错误走 HTTP 200**，`code` 为字符串 `"0"` 表成功。判定顺序收敛在 `src/api/client.ts`：429+非JSON→RateLimit → 非200→Transport → `code!="0"`→Biz。**绝不依赖 HTTP 状态判业务成败。**
-2. **字段命名双制**：identityhub `snake_case`，tenantmanager `camelCase`。两类类型物理隔离（`types/identityhub.ts` vs `types/tenantmanager.ts`）。
+2. **字段命名已统一 `snake_case`**：重设计后 tenantmanager **也走 `snake_case`**（定稿见 `openspec/changes/redesign-tenant-identity-model/drafts/openplatformsvr/api/tenantmanager/v1/**`）—— 原「tenantmanager 一律 camelCase」的制式随 proto 重做一并作废。两类类型仍物理隔离（`types/identityhub.ts` vs `types/tenantmanager.ts`）。
 3. **Update 是全量覆盖非 patch**：表单必须 load-then-merge 全量提交。
 4. **限流 10 QPS 全局**（identityhubsvr）：树展开 / 批量操作必须串行或节流。
 5. 状态值 `enable` / `disable`（不是 enabled/disabled）。
 6. 分页结构不一致：Directory `{total,list}` vs Org `{list,total,page,page_size}` —— 归一化适配层处理。
 7. `msg` 恒中文：按 `code` 映射文案，`msg` 仅兜底。
-8. 请求头 `t-head-tenantId` / `t-head-userId` / `t-head-tenantLanguage` / `t-head-tenantUILanguage` 从会话态注入。
+8. 请求头**仅两个**，均由 `api/client.ts` 从会话态 / 作用域注入：
+   `t-head-tenantId`（租户 code）与 `t-head-tenantUILanguage`（界面语言）。
+   原 `t-head-userId` 已取消 —— 身份由令牌声明承载，不再由客户端下发；
+   `t-head-tenantLanguage`（租户默认业务语言）本端也不下发 —— 它是**服务端已知**的租户持久化设置，
+   该头仅供非浏览器客户端使用（`errors.GetTenantMsg` 的 `UILanguage → Language → en` 回退链）。
 
 ## 安全硬性要求
 
@@ -57,7 +60,7 @@ src/
 ├── stores/        session · scope
 ├── hooks/queries/ TanStack Query hooks
 ├── layouts/       ConsoleLayout · TopBar · SideNav
-├── features/      auth · overview · directory · organization · member · security_group · tenant
+├── features/      auth · overview · directory · organization · member · user_role · tenant
 ├── components/    ui · OrgTree · DataTable
 ├── styles/        tokens.css · typography.css · global.css
 └── mocks/         MSW handlers + fixtures

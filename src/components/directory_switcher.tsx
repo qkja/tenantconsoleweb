@@ -8,26 +8,25 @@ import './directory_switcher.css';
 /**
  * 顶栏目录域切换器（类比云控制台「地域」）。
  * 目录域属于租户作用域：切换租户后自动清空，需重新选择。
- * 数据源 = 真实网关目录域列表（use_directory_list）。
  */
 export function DirectorySwitcher() {
   const { t } = use_i18n();
-  const { tenant_id, directory_domain, set_directory_domain } = use_scope();
+  const { tenant_code, directory_code, set_directory_code } = use_scope();
   const { data: directories = [] } = use_directory_list();
 
-  const current = directories.find((item) => item.domain === directory_domain);
+  const current = directories.find((item) => item.directory_code === directory_code);
 
   return (
     <Dropdown
       trigger={['click']}
-      disabled={tenant_id == null || directories.length === 0}
+      disabled={tenant_code == null || directories.length === 0}
       menu={{
         items: directories.map((item) => ({
-          key: item.domain,
+          key: item.directory_code,
           label: item.name,
           icon: <FolderOpenOutlined />,
         })),
-        onClick: ({ key }) => set_directory_domain(key),
+        onClick: ({ key }) => set_directory_code(key),
       }}
     >
       <Button type="text" className="directory-switcher">

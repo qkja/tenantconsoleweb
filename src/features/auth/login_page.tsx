@@ -1,4 +1,4 @@
-import { LockOutlined, NumberOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input } from 'antd';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +9,11 @@ import { use_session } from '@/stores/session';
 import './login_page.css';
 
 interface LoginFormValues {
-  domain: string;
+  name: string;
   password: string;
 }
 
-/** 登录页 —— 账号 = 租户 domain（7 位数字），无多企业选择。 */
+/** 登录页 —— 账号 = 租户管理员名称（name），无手机号、无多企业选择。 */
 export function LoginPage() {
   const { t } = use_i18n();
   const navigate = useNavigate();
@@ -27,13 +27,9 @@ export function LoginPage() {
     set_submitting(true);
     set_error_msg(null);
     try {
-      const session = await login(values);
+      const session = await login({ name: values.name, password: values.password });
       set_session(session);
-      set_tenant({
-        tenant_id: session.tenant.tenant_id,
-        tenant_domain: session.tenant.domain,
-        ui_language: session.tenant.ui_language,
-      });
+      set_tenant({ tenant_code: session.tenant_code, ui_language: 'zh_CN' });
       navigate('/overview', { replace: true });
     } catch (error) {
       set_error_msg(error instanceof Error ? error.message : String(error));
@@ -61,14 +57,14 @@ export function LoginPage() {
           size="large"
         >
           <Form.Item
-            name="domain"
-            label={t('auth.domain')}
-            rules={[{ required: true, pattern: /^\d{7}$/, message: t('auth.domain_required') }]}
+            name="name"
+            label={t('auth.name')}
+            rules={[{ required: true, message: t('auth.name_required') }]}
           >
             <Input
-              prefix={<NumberOutlined />}
+              prefix={<UserOutlined />}
               autoComplete="username"
-              placeholder={t('auth.domain_placeholder')}
+              placeholder={t('auth.name_placeholder')}
             />
           </Form.Item>
 
@@ -98,7 +94,7 @@ export function LoginPage() {
         </Form>
       </div>
 
-      <p className="login-page__footer">Mock：域标识 1000001 · 密码 admin123</p>
+      <p className="login-page__footer">Mock：名称 admin · 密码 admin123</p>
     </div>
   );
 }

@@ -1,23 +1,19 @@
 import { ShopOutlined } from '@ant-design/icons';
+import { use_current_tenant } from '@/hooks/queries/use_current_tenant';
 import { use_i18n } from '@/lib/i18n';
-import { use_session } from '@/stores/session';
 import './tenant_switcher.css';
 
-/**
- * 顶栏当前企业展示 —— 单租户（登录账号即租户 domain，无多企业切换）。
- * 显示企业名 + 域标识。
- */
+/** 顶栏当前企业展示 —— 显示客户名称（GetCurrentTenant）。 */
 export function TenantSwitcher() {
   const { t } = use_i18n();
-  const { tenant } = use_session();
+  const { data: tenant } = use_current_tenant();
 
   return (
     <span className="tenant-switcher" role="status">
       <ShopOutlined className="tenant-switcher__icon" />
       <span className="tenant-switcher__name">
-        {tenant?.tenant_name ?? t('topbar.tenant_switcher')}
+        {tenant?.customer_name ?? t('topbar.tenant_switcher')}
       </span>
-      {tenant != null ? <span className="tenant-switcher__domain">{tenant.domain}</span> : null}
     </span>
   );
 }

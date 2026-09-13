@@ -51,7 +51,7 @@ export function ChangePassword() {
           <Form.Item
             name="new_password"
             label={t('auth.new_password')}
-            rules={[{ required: true, min: 8, message: t('auth.password_required') }]}
+            rules={[{ required: true, message: t('auth.password_required') }]}
           >
             <Input.Password autoComplete="new-password" />
           </Form.Item>

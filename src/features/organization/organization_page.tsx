@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { create_organization, delete_organization, update_organization } from '@/api/organization';
 import { OrgTree } from '@/components/org_tree/org_tree';
 import { use_directory_list } from '@/hooks/queries/use_directory_list';
+import { format_unix_time } from '@/lib/format';
 import { use_t } from '@/lib/i18n';
 import { use_scope } from '@/stores/scope';
 import type { OrganizationInfo } from '@/types/identityhub';
@@ -17,11 +18,11 @@ interface OrgFormValues {
 
 type CreateParent = OrganizationInfo | 'root' | null;
 
-/** 组织架构 —— 企微通讯录双栏：左组织树 + 右部门详情。真实网关 :8888。 */
+/** 组织架构 —— 企微通讯录双栏：左组织树 + 右部门详情。 */
 export function OrganizationPage() {
   const t = use_t();
   const { message } = App.useApp();
-  const { directory_domain } = use_scope();
+  const { directory_code } = use_scope();
   const { data: directories = [] } = use_directory_list();
 
   const [selected, set_selected] = useState<OrganizationInfo | null>(null);
@@ -29,7 +30,7 @@ export function OrganizationPage() {
   const [editing, set_editing] = useState<OrganizationInfo | null>(null);
   const [create_parent, set_create_parent] = useState<CreateParent>(null);
 
-  const domain = directory_domain ?? directories[0]?.domain ?? '';
+  const dir_code = directory_code ?? directories[0]?.directory_code ?? '';
 
   const open_create = (parent: CreateParent) => {
     set_editing(null);
@@ -45,7 +46,7 @@ export function OrganizationPage() {
 
   const on_delete = async (node: OrganizationInfo) => {
     try {
-      await delete_organization(node.id, domain);
+      await delete_organization(node.organization_code, dir_code);
       message.success(t('common.deleted'));
       set_selected(null);
     } catch (error) {
@@ -56,15 +57,17 @@ export function OrganizationPage() {
   const on_submit = async (values: OrgFormValues) => {
     try {
       if (editing != null) {
-        await update_organization(editing.id, domain, {
+        await update_organization(editing.organization_code, dir_code, {
           name: values.name,
           description: values.description,
         });
       } else {
         await create_organization({
-          domain,
-          parent_id:
-            create_parent === 'root' || create_parent == null ? undefined : create_parent.id,
+          directory_code: dir_code,
+          parent_code:
+            create_parent === 'root' || create_parent == null
+              ? undefined
+              : create_parent.organization_code,
           name: values.name,
           description: values.description,
         });
@@ -86,7 +89,11 @@ export function OrganizationPage() {
   return (
     <div className="organization-page">
       <Card className="organization-page__tree-card" title={t('organization.title')}>
-        <OrgTree domain={domain} selected_id={selected?.id ?? null} on_select={set_selected} />
+        <OrgTree
+          directory_code={dir_code}
+          selected_id={selected?.organization_code ?? null}
+          on_select={set_selected}
+        />
       </Card>
 
       <Card
@@ -127,11 +134,16 @@ export function OrganizationPage() {
               {
                 key: 'parent',
                 label: t('organization.parent'),
-                children: selected.parent_id || '—',
+                children: selected.parent_code || '—',
               },
-              { key: 'domain', label: t('directory.domain'), children: selected.domain },
-              { key: 'level', label: 'Level', children: selected.level },
-              { key: 'created', label: t('directory.created_at'), children: selected.created_at },
+              { key: 'directory', label: t('directory.code'), children: selected.directory_code },
+              { key: 'path', label: t('organization.path'), children: selected.path || '—' },
+              { key: 'level', label: t('organization.level'), children: selected.level },
+              {
+                key: 'created',
+                label: t('directory.created_at'),
+                children: format_unix_time(selected.created_at),
+              },
             ]}
           />
         )}

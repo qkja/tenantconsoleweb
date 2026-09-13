@@ -1,22 +1,29 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { ModalForm, ProFormText } from '@ant-design/pro-form';
+import { ModalForm, ProFormSelect, ProFormText } from '@ant-design/pro-form';
 import { ProTable } from '@ant-design/pro-table';
 import type { ProColumns } from '@ant-design/pro-table';
 import { App, Button, Popconfirm, Space, Tag } from 'antd';
 import { useState } from 'react';
 import { create_directory, delete_directory, update_directory } from '@/api/directory';
 import { use_directory_list } from '@/hooks/queries/use_directory_list';
+import { format_unix_time } from '@/lib/format';
 import { use_t } from '@/lib/i18n';
-import type { DirectoryInfo } from '@/types/identityhub';
+import type { DirectoryInfo, DirectoryType } from '@/types/identityhub';
 import './directory_page.css';
 
 interface DirectoryFormValues {
   name: string;
-  domain: string;
+  type: DirectoryType;
   description?: string;
 }
 
-/** 目录域管理 —— 租户内的通讯录分区。真实网关 :8888。 */
+const TYPE_OPTIONS = [
+  { value: 'local', label: 'local' },
+  { value: 'ad', label: 'ad' },
+  { value: 'ldap', label: 'ldap' },
+];
+
+/** 目录域管理 —— 租户内的用户源分区。type 创建后不可变。 */
 export function DirectoryPage() {
   const t = use_t();
   const { message } = App.useApp();
@@ -24,9 +31,9 @@ export function DirectoryPage() {
   const [editing, set_editing] = useState<DirectoryInfo | null>(null);
   const [form_open, set_form_open] = useState(false);
 
-  const on_delete = async (domain: string) => {
+  const on_delete = async (directory_code: string) => {
     try {
-      await delete_directory(domain);
+      await delete_directory(directory_code);
       message.success(t('common.deleted'));
       void refetch();
     } catch (error) {
@@ -37,12 +44,12 @@ export function DirectoryPage() {
   const on_submit = async (values: DirectoryFormValues) => {
     try {
       if (editing != null) {
-        await update_directory(editing.domain, {
+        await update_directory(editing.directory_code, {
           name: values.name,
           description: values.description,
         });
       } else {
-        await create_directory(values);
+        await create_directory({ name: values.name, type: values.type, description: values.description });
       }
       message.success(t('common.saved'));
       set_form_open(false);
@@ -56,12 +63,28 @@ export function DirectoryPage() {
   const columns: ProColumns<DirectoryInfo>[] = [
     { title: t('directory.name'), dataIndex: 'name' },
     {
-      title: t('directory.domain'),
-      dataIndex: 'domain',
-      render: (_, record) => <Tag>{record.domain}</Tag>,
+      title: t('directory.type'),
+      dataIndex: 'type',
+      width: 90,
+      render: (_, record) => <Tag>{record.type}</Tag>,
     },
     { title: t('directory.description'), dataIndex: 'description', ellipsis: true },
-    { title: t('directory.created_at'), dataIndex: 'created_at', width: 180 },
+    {
+      title: t('directory.status'),
+      dataIndex: 'status',
+      width: 90,
+      render: (_, record) => (
+        <Tag color={record.status === 'enable' ? 'green' : 'default'}>
+          {record.status === 'enable' ? t('common.enable') : t('common.disable')}
+        </Tag>
+      ),
+    },
+    {
+      title: t('directory.created_at'),
+      dataIndex: 'created_at',
+      width: 180,
+      render: (_, record) => format_unix_time(record.created_at),
+    },
     {
       title: t('common.actions'),
       valueType: 'option',
@@ -78,7 +101,7 @@ export function DirectoryPage() {
           </a>
           <Popconfirm
             title={t('directory.delete_confirm')}
-            onConfirm={() => on_delete(record.domain)}
+            onConfirm={() => on_delete(record.directory_code)}
           >
             <a className="directory-page__danger">{t('common.delete')}</a>
           </Popconfirm>
@@ -90,7 +113,7 @@ export function DirectoryPage() {
   return (
     <div className="directory-page">
       <ProTable<DirectoryInfo>
-        rowKey="id"
+        rowKey="directory_code"
         columns={columns}
         dataSource={directories}
         loading={isLoading}
@@ -116,7 +139,7 @@ export function DirectoryPage() {
         title={editing != null ? t('directory.edit') : t('directory.create')}
         open={form_open}
         onOpenChange={set_form_open}
-        initialValues={editing ?? { name: '', domain: '', description: '' }}
+        initialValues={editing ?? { name: '', type: 'local', description: '' }}
         modalProps={{ destroyOnClose: true }}
         onFinish={async (values) => {
           await on_submit(values);
@@ -128,12 +151,13 @@ export function DirectoryPage() {
           label={t('directory.name')}
           rules={[{ required: true, message: t('directory.name_required') }]}
         />
-        <ProFormText
-          name="domain"
-          label={t('directory.domain')}
+        <ProFormSelect
+          name="type"
+          label={t('directory.type')}
           disabled={editing != null}
-          rules={[{ required: true, pattern: /^\d{7}$/, message: t('directory.domain_required') }]}
-          extra={t('directory.domain_hint')}
+          options={TYPE_OPTIONS}
+          rules={[{ required: true, message: t('directory.type_required') }]}
+          extra={editing != null ? t('directory.type_immutable') : undefined}
         />
         <ProFormText name="description" label={t('directory.description')} />
       </ModalForm>

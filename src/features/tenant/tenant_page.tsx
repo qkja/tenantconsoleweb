@@ -1,76 +1,65 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { App, Button, Card, Descriptions, Form, Input, Modal, Select, Skeleton } from 'antd';
 import { useState } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { PlusOutlined } from '@ant-design/icons';
-import {
-  App,
-  Button,
-  Card,
-  Descriptions,
-  Form,
-  Input,
-  Modal,
-  Popconfirm,
-  Skeleton,
-  Table,
-  Tag,
-} from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-import { add_admin, list_admins, set_admin_status } from '@/api/tenant';
-import { use_scope } from '@/stores/scope';
-import { use_tenant_info } from '@/hooks/queries/use_tenant_info';
+import { update_current_tenant } from '@/api/tenant';
+import { use_current_tenant } from '@/hooks/queries/use_current_tenant';
+import { format_unix_time } from '@/lib/format';
 import { use_t } from '@/lib/i18n';
-import type { TenantAdminInfo } from '@/types/tenantmanager';
 import './tenant_page.css';
 
-interface AdminFormValues {
-  account: string;
-  display_name: string;
-  password: string;
+interface TenantFormValues {
+  customer_name: string;
+  contact_name?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  language: string;
 }
 
-/** 企业信息 + 管理员管理 —— 以租户 domain 寻址（tenantmanagersvr 真实网关）。 */
+const LANGUAGE_OPTIONS = [
+  { value: 'zh-CN', label: '简体中文' },
+  { value: 'en-US', label: 'English' },
+];
+
+/**
+ * 租户自助 —— 客户名称 / 联系方式 / 地址 / 默认业务语言。
+ * 不改 status（租户启停属平台管理员），不含登录账号字段（管理员名称在 /me/admin 维护）。
+ */
 export function TenantPage() {
   const t = use_t();
   const { message } = App.useApp();
   const query_client = useQueryClient();
-  const { tenant_domain } = use_scope();
-  const { data: tenant, isLoading } = use_tenant_info(tenant_domain);
-
-  const { data: admins = [] } = useQuery<TenantAdminInfo[]>({
-    queryKey: ['tenant', 'admins'],
-    queryFn: () => list_admins(),
-  });
-
-  const [add_open, set_add_open] = useState(false);
+  const { data: tenant, isLoading } = use_current_tenant();
+  const [open, set_open] = useState(false);
   const [submitting, set_submitting] = useState(false);
-  const [form] = Form.useForm<AdminFormValues>();
+  const [form] = Form.useForm<TenantFormValues>();
 
-  const invalidate = () => {
-    void query_client.invalidateQueries({ queryKey: ['tenant', 'admins'] });
+  const open_edit = () => {
+    form.setFieldsValue({
+      customer_name: tenant?.customer_name ?? '',
+      contact_name: tenant?.contact_name ?? '',
+      phone: tenant?.phone ?? '',
+      email: tenant?.email ?? '',
+      address: tenant?.address ?? '',
+      language: tenant?.language ?? 'zh-CN',
+    });
+    set_open(true);
   };
 
-  const on_toggle = async (account: string, status: 'enable' | 'disable') => {
-    try {
-      await set_admin_status({ account, status });
-      message.success(status === 'disable' ? t('admin.disabled') : t('admin.enabled'));
-      invalidate();
-    } catch (error) {
-      message.error(error instanceof Error ? error.message : String(error));
-    }
-  };
-
-  const on_add = async (values: AdminFormValues) => {
+  const on_finish = async (values: TenantFormValues) => {
     set_submitting(true);
     try {
-      await add_admin({
-        account: values.account,
-        displayName: values.display_name,
-        password: values.password,
+      await update_current_tenant({
+        customer_name: values.customer_name,
+        contact_name: values.contact_name,
+        phone: values.phone,
+        email: values.email,
+        address: values.address,
+        language: values.language,
       });
-      message.success(t('admin.added'));
-      set_add_open(false);
-      form.resetFields();
-      invalidate();
+      message.success(t('common.saved'));
+      set_open(false);
+      void query_client.invalidateQueries({ queryKey: ['tenant', 'me'] });
     } catch (error) {
       message.error(error instanceof Error ? error.message : String(error));
     } finally {
@@ -78,50 +67,17 @@ export function TenantPage() {
     }
   };
 
-  const columns: ColumnsType<TenantAdminInfo> = [
-    { title: t('admin.account'), dataIndex: 'account', key: 'account' },
-    { title: t('admin.display_name'), dataIndex: 'displayName', key: 'displayName' },
-    {
-      title: t('admin.status'),
-      dataIndex: 'status',
-      key: 'status',
-      width: 90,
-      render: (status: string) => (
-        <Tag color={status === 'enable' ? 'green' : 'default'}>
-          {status === 'enable' ? t('common.enable') : t('common.disable')}
-        </Tag>
-      ),
-    },
-    {
-      title: t('common.actions'),
-      key: 'action',
-      width: 90,
-      render: (_: unknown, record: TenantAdminInfo) =>
-        record.status === 'enable' ? (
-          <Popconfirm
-            title={t('admin.disable_confirm')}
-            onConfirm={() => void on_toggle(record.account, 'disable')}
-          >
-            <Button type="link" size="small" danger>
-              {t('common.disable')}
-            </Button>
-          </Popconfirm>
-        ) : (
-          <Popconfirm
-            title={t('admin.enable_confirm')}
-            onConfirm={() => void on_toggle(record.account, 'enable')}
-          >
-            <Button type="link" size="small">
-              {t('common.enable')}
-            </Button>
-          </Popconfirm>
-        ),
-    },
-  ];
-
   return (
     <div className="tenant-page">
-      <Card className="tenant-page__card" title={t('tenant.company_profile')}>
+      <Card
+        className="tenant-page__card"
+        title={t('tenant.company_profile')}
+        extra={
+          <Button type="primary" onClick={open_edit}>
+            {t('tenant.edit')}
+          </Button>
+        }
+      >
         {isLoading || tenant == null ? (
           <Skeleton active paragraph={{ rows: 8 }} />
         ) : (
@@ -129,73 +85,48 @@ export function TenantPage() {
             column={1}
             size="middle"
             items={[
-              { key: 'name', label: t('tenant.name'), children: tenant.name },
-              { key: 'domain', label: t('tenant.domain'), children: tenant.domain },
-              { key: 'contact', label: t('tenant.contact_name'), children: tenant.contactName },
-              { key: 'phone', label: t('tenant.contact_phone'), children: tenant.contactPhone },
-              { key: 'email', label: t('tenant.contact_email'), children: tenant.contactEmail },
-              {
-                key: 'status',
-                label: t('tenant.status'),
-                children: <Tag color="green">{tenant.status}</Tag>,
-              },
-              { key: 'remark', label: t('tenant.remark'), children: tenant.remark || '—' },
-              {
-                key: 'created',
-                label: t('tenant.created_at'),
-                children: tenant.createTime || '—',
-              },
+              { key: 'customer_name', label: t('tenant.customer_name'), children: tenant.customer_name },
+              { key: 'contact_name', label: t('tenant.contact_name'), children: tenant.contact_name || '—' },
+              { key: 'phone', label: t('tenant.phone'), children: tenant.phone || '—' },
+              { key: 'email', label: t('tenant.email'), children: tenant.email || '—' },
+              { key: 'address', label: t('tenant.address'), children: tenant.address || '—' },
+              { key: 'language', label: t('tenant.language'), children: tenant.language },
+              { key: 'created_at', label: t('tenant.created_at'), children: format_unix_time(tenant.created_at) },
             ]}
           />
         )}
       </Card>
 
-      <Card
-        className="tenant-page__card"
-        title={t('admin.title')}
-        extra={
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => set_add_open(true)}>
-            {t('admin.add')}
-          </Button>
-        }
-      >
-        <Table<TenantAdminInfo>
-          rowKey="account"
-          columns={columns}
-          dataSource={admins}
-          pagination={false}
-        />
-      </Card>
-
       <Modal
-        title={t('admin.add')}
-        open={add_open}
-        onCancel={() => set_add_open(false)}
+        title={t('tenant.edit')}
+        open={open}
+        onCancel={() => set_open(false)}
         onOk={() => form.submit()}
         confirmLoading={submitting}
         destroyOnClose
       >
-        <Form<AdminFormValues> form={form} layout="vertical" onFinish={on_add}>
+        <Form<TenantFormValues> form={form} layout="vertical" onFinish={on_finish}>
           <Form.Item
-            name="account"
-            label={t('admin.account')}
-            rules={[{ required: true, message: t('admin.account_required') }]}
+            name="customer_name"
+            label={t('tenant.customer_name')}
+            rules={[{ required: true, message: t('tenant.customer_name_required') }]}
           >
-            <Input placeholder={t('admin.account')} />
+            <Input />
           </Form.Item>
-          <Form.Item
-            name="display_name"
-            label={t('admin.display_name')}
-            rules={[{ required: true, message: t('admin.display_name_required') }]}
-          >
-            <Input placeholder={t('admin.display_name')} />
+          <Form.Item name="contact_name" label={t('tenant.contact_name')}>
+            <Input />
           </Form.Item>
-          <Form.Item
-            name="password"
-            label={t('admin.password')}
-            rules={[{ required: true, message: t('admin.password_required') }]}
-          >
-            <Input.Password placeholder={t('admin.password')} />
+          <Form.Item name="phone" label={t('tenant.phone')}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="email" label={t('tenant.email')} rules={[{ type: 'email', message: t('common.email_invalid') }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="address" label={t('tenant.address')}>
+            <Input.TextArea rows={2} />
+          </Form.Item>
+          <Form.Item name="language" label={t('tenant.language')}>
+            <Select options={LANGUAGE_OPTIONS} />
           </Form.Item>
         </Form>
       </Modal>

@@ -3,20 +3,11 @@ import { use_session } from '@/stores/session';
 
 const session_payload = {
   access_token: 'token',
-  user: {
-    user_id: 'u_1',
-    username: 'admin',
-    display_name: '管理员',
-    scope: 'admin' as const,
-    roles: ['tenant_admin'],
-  },
-  tenant: {
-    tenant_id: 't_1',
-    tenant_name: '示例科技',
-    domain: '1000001',
-    language: 'zh_CN' as const,
-    ui_language: 'zh_CN' as const,
-  },
+  refresh_token: 'refresh',
+  expires_in: 7200,
+  token_type: 'Bearer',
+  tenant_code: 'tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP',
+  must_change_password: false,
 };
 
 describe('session store', () => {
@@ -34,7 +25,14 @@ describe('session store', () => {
     const state = use_session.getState();
     expect(state.is_authenticated).toBe(true);
     expect(state.access_token).toBe('token');
-    expect(state.tenant?.domain).toBe('1000001');
+    expect(state.tenant_code).toBe('tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP');
+  });
+
+  it('set_access_token 仅更新令牌', () => {
+    use_session.getState().set_session(session_payload);
+    use_session.getState().set_access_token('new-token');
+    expect(use_session.getState().access_token).toBe('new-token');
+    expect(use_session.getState().tenant_code).toBe('tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP');
   });
 
   it('clear_session 回到初始态', () => {
@@ -43,7 +41,6 @@ describe('session store', () => {
     const state = use_session.getState();
     expect(state.is_authenticated).toBe(false);
     expect(state.access_token).toBeNull();
-    expect(state.user).toBeNull();
-    expect(state.tenant).toBeNull();
+    expect(state.tenant_code).toBeNull();
   });
 });

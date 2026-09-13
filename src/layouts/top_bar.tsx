@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '@/api/auth';
 import { DirectorySwitcher } from '@/components/directory_switcher';
 import { TenantSwitcher } from '@/components/tenant_switcher';
+import { use_current_admin } from '@/hooks/queries/use_current_admin';
 import { use_i18n, type Language } from '@/lib/i18n';
 import { use_session } from '@/stores/session';
 import './top_bar.css';
@@ -13,12 +14,13 @@ const LANGUAGE_OPTIONS: { value: Language; label: string }[] = [
   { value: 'en_US', label: 'English' },
 ];
 
-/** 顶栏：品牌 + 租户/目录域切换 + 语言 + 当前用户。 */
+/** 顶栏：品牌 + 租户/目录域切换 + 语言 + 当前管理员。 */
 export function TopBar() {
   const { t, language, set_language } = use_i18n();
-  const { user, is_authenticated, clear_session } = use_session();
+  const { is_authenticated, clear_session } = use_session();
+  const { data: admin } = use_current_admin();
 
-  const display_name = user?.display_name ?? user?.username ?? '';
+  const display_name = admin?.name ?? '';
   const initial = display_name.slice(0, 1).toUpperCase();
 
   const language_items: MenuProps['items'] = LANGUAGE_OPTIONS.map((option) => ({
@@ -29,12 +31,17 @@ export function TopBar() {
   const navigate = useNavigate();
 
   const user_items: MenuProps['items'] = [
+    { key: 'admin-profile', label: t('topbar.my_account'), icon: <UserOutlined /> },
     { key: 'change-password', label: t('topbar.change_password'), icon: <KeyOutlined /> },
     { type: 'divider' },
     { key: 'logout', label: t('topbar.logout'), icon: <LogoutOutlined /> },
   ];
 
   const on_user_menu_click: MenuProps['onClick'] = async ({ key }) => {
+    if (key === 'admin-profile') {
+      navigate('/admin-profile');
+      return;
+    }
     if (key === 'change-password') {
       navigate('/change-password');
       return;

@@ -1,61 +1,126 @@
 import { http, HttpResponse } from 'msw';
-import type { ApiEnvelope } from '@/api/envelope';
-import type { PageEnvelope } from '@/api/envelope';
+import type { ApiEnvelope, PageData } from '@/api/envelope';
 import type { UserInfo } from '@/types/identityhub';
 import { mock_users } from '@/mocks/fixtures/user';
 
 const OK = '0';
 
-/**
- * 成员 mock —— 仅 dev:mock 全量模式（VITE_MOCK_SCOPE=all）注册；
- * dev 真实后端模式用户管理已走真实网关（ListUser/SearchUser），本组不参与。
- * 按 domain/org_id 过滤夹具。
- */
+function random_code(prefix: string): string {
+  const alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+  let ulid = '';
+  for (let i = 0; i < 26; i += 1) {
+    ulid += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return `${prefix}_${ulid}`;
+}
+
+/** 成员 —— 列表（keyword / directory_code / organization_code 过滤）与增删改查 / 状态。 */
 export const user_handlers = [
-  http.get('/api/identityhub/v1/user/list', ({ request }) => {
+  http.get('/api/identityhub/v1/users/list', ({ request }) => {
     const url = new URL(request.url);
-    const domain = url.searchParams.get('domain') ?? '';
-    const org_id = url.searchParams.get('org_id');
+    const directory_code = url.searchParams.get('directory_code') ?? '';
+    const organization_code = url.searchParams.get('organization_code');
+    const keyword = url.searchParams.get('keyword') ?? '';
 
-    const list = mock_users.filter(
-      (user) => user.domain === domain && (org_id == null || user.primary_org_id === org_id),
-    );
+    const list = mock_users.filter((user) => {
+      if (directory_code !== '' && user.directory_code !== directory_code) {
+        return false;
+      }
+      if (organization_code != null && user.organization_code !== organization_code) {
+        return false;
+      }
+      if (keyword !== '' && !user.name.includes(keyword) && !user.email.includes(keyword)) {
+        return false;
+      }
+      return true;
+    });
 
-    const envelope: ApiEnvelope<PageEnvelope<UserInfo>> = {
-      code: OK,
-      msg: '',
-      data: { list, total: list.length },
+    const data: PageData & { list: UserInfo[] } = {
+      list,
+      total: list.length,
+      page: 1,
+      page_size: 500,
     };
-    return HttpResponse.json(envelope);
+    return HttpResponse.json<ApiEnvelope<typeof data>>({ code: OK, msg: '', data });
   }),
 
-  http.post('/api/identityhub/v1/user/create', async ({ request }) => {
-    const body = (await request.json()) as Partial<UserInfo>;
+  http.get('/api/identityhub/v1/users/get', ({ request }) => {
+    const url = new URL(request.url);
+    const user_code = url.searchParams.get('user_code') ?? '';
+    const user = mock_users.find((item) => item.user_code === user_code);
+    if (user == null) {
+      return HttpResponse.json<ApiEnvelope<never>>({ code: '2002', msg: '用户不存在', data: null as never });
+    }
+    return HttpResponse.json<ApiEnvelope<UserInfo>>({ code: OK, msg: '', data: user });
+  }),
+
+  http.post('/api/identityhub/v1/users/create', async ({ request }) => {
+    const body = (await request.json()) as Partial<UserInfo> & { password?: string };
     const created: UserInfo = {
-      id: `u_mock_${Date.now().toString(36)}`,
-      tenant_id: body.tenant_id ?? 't_001',
-      domain: body.domain ?? '1000001',
-      username: body.username ?? '',
-      phone: body.phone ?? '',
+      user_code: random_code('usr'),
+      directory_code: body.directory_code ?? '',
+      organization_code: body.organization_code ?? '',
+      name: body.name ?? '',
       email: body.email ?? '',
-      display_name: body.display_name ?? '',
-      avatar: body.avatar ?? '',
-      external_id: body.external_id ?? '',
-      primary_org_id: body.primary_org_id ?? '',
+      country_code: body.country_code ?? '',
+      phone: body.phone ?? '',
+      description: body.description ?? '',
+      source: 'local',
+      external_id: '',
       status: body.status ?? 'enable',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      max_login_failures: 5,
+      login_fail_window: 15,
+      login_fail_window_unit: 'minute',
+      failed_login_count: 0,
+      is_locked: false,
+      must_change_password: body.must_change_password ?? false,
+      user_role_codes: body.user_role_codes ?? [],
+      created_at: Math.floor(Date.now() / 1000),
+      updated_at: Math.floor(Date.now() / 1000),
     };
     mock_users.push(created);
+    return HttpResponse.json<ApiEnvelope<{ user_code: string }>>({
+      code: OK,
+      msg: '',
+      data: { user_code: created.user_code },
+    });
+  }),
+
+  http.put('/api/identityhub/v1/users/update', async ({ request }) => {
+    const body = (await request.json()) as Partial<UserInfo>;
+    const user = mock_users.find((item) => item.user_code === body.user_code);
+    if (user != null) {
+      const keys = [
+        'name',
+        'email',
+        'country_code',
+        'phone',
+        'description',
+        'organization_code',
+      ] as const;
+      for (const key of keys) {
+        if (body[key] != null) {
+          (user as unknown as Record<string, unknown>)[key] = body[key];
+        }
+      }
+    }
     return HttpResponse.json<ApiEnvelope<never>>({ code: OK, msg: '', data: null as never });
   }),
 
-  http.delete('/api/identityhub/v1/user/delete', ({ request }) => {
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id') ?? '';
-    const index = mock_users.findIndex((user) => user.id === id);
+  http.delete('/api/identityhub/v1/users/delete', async ({ request }) => {
+    const body = (await request.json()) as { user_code?: string };
+    const index = mock_users.findIndex((item) => item.user_code === body.user_code);
     if (index !== -1) {
       mock_users.splice(index, 1);
+    }
+    return HttpResponse.json<ApiEnvelope<never>>({ code: OK, msg: '', data: null as never });
+  }),
+
+  http.put('/api/identityhub/v1/users/status', async ({ request }) => {
+    const body = (await request.json()) as { user_code?: string; status?: string };
+    const user = mock_users.find((item) => item.user_code === body.user_code);
+    if (user != null) {
+      user.status = body.status === 'disable' ? 'disable' : 'enable';
     }
     return HttpResponse.json<ApiEnvelope<never>>({ code: OK, msg: '', data: null as never });
   }),

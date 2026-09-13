@@ -1,28 +1,41 @@
 import { request } from '@/api/client';
-import type { DirectoryInfo, DirectoryListData } from '@/types/identityhub';
+import type { PageData } from '@/api/envelope';
+import type { DirectoryInfo, DirectoryType } from '@/types/identityhub';
 
 export interface ListDirectoryParams {
+  keyword?: string;
   page?: number;
   page_size?: number;
-  keyword?: string;
+  search_fields?: string[];
+  type?: DirectoryType;
+  status?: string;
+  sort_by?: string;
+  descending?: string;
 }
+
+export type DirectoryListData = PageData & { list: DirectoryInfo[] };
 
 export function list_directory(params?: ListDirectoryParams): Promise<DirectoryListData> {
-  return request<DirectoryListData>('/identityhub/v1/directory/list', { params });
+  return request<DirectoryListData>('/identityhub/v1/directories/list', { params });
 }
 
-export function get_directory(domain: string): Promise<DirectoryInfo> {
-  return request<DirectoryInfo>('/identityhub/v1/directory/get', { params: { domain } });
+export function get_directory(directory_code: string): Promise<DirectoryInfo> {
+  return request<DirectoryInfo>('/identityhub/v1/directories/get', {
+    params: { directory_code },
+  });
 }
 
 export interface CreateDirectoryInput {
   name: string;
-  domain: string;
+  type: DirectoryType;
   description?: string;
 }
 
-export function create_directory(data: CreateDirectoryInput): Promise<void> {
-  return request<void>('/identityhub/v1/directory/create', { method: 'POST', body: data });
+export function create_directory(data: CreateDirectoryInput): Promise<{ directory_code: string }> {
+  return request<{ directory_code: string }>('/identityhub/v1/directories/create', {
+    method: 'POST',
+    body: data,
+  });
 }
 
 export interface UpdateDirectoryInput {
@@ -30,17 +43,30 @@ export interface UpdateDirectoryInput {
   description?: string;
 }
 
-/** Update 是全量覆盖非 patch —— 调用方负责 load-then-merge 全量提交。 */
-export function update_directory(domain: string, data: UpdateDirectoryInput): Promise<void> {
-  return request<void>('/identityhub/v1/directory/update', {
+/** 部分更新（§1.5）—— 仅名称与描述；type 不可变。 */
+export function update_directory(
+  directory_code: string,
+  data: UpdateDirectoryInput,
+): Promise<void> {
+  return request<void>('/identityhub/v1/directories/update', {
     method: 'PUT',
-    body: { domain, ...data },
+    body: { directory_code, ...data },
   });
 }
 
-export function delete_directory(domain: string): Promise<void> {
-  return request<void>('/identityhub/v1/directory/delete', {
+export function delete_directory(directory_code: string): Promise<void> {
+  return request<void>('/identityhub/v1/directories/delete', {
     method: 'DELETE',
-    params: { domain },
+    body: { directory_code },
+  });
+}
+
+export function update_directory_status(
+  directory_code: string,
+  status: 'enable' | 'disable',
+): Promise<void> {
+  return request<void>('/identityhub/v1/directories/status', {
+    method: 'PUT',
+    body: { directory_code, status },
   });
 }

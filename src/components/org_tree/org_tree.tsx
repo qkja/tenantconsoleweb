@@ -6,27 +6,27 @@ import type { OrganizationInfo } from '@/types/identityhub';
 import './org_tree.css';
 
 interface OrgTreeProps {
-  domain: string;
+  directory_code: string;
   selected_id: string | null;
   on_select: (node: OrganizationInfo) => void;
 }
 
 function to_tree_node(node: OrganizationInfo): TreeDataNode {
-  return { key: node.id, title: node.name, isLeaf: false };
+  return { key: node.organization_code, title: node.name, isLeaf: false };
 }
 
-/** 组织架构树 —— 根节点走 query，深层子级展开时按 parent_id 懒加载（规避 10 QPS 限流）。 */
-export function OrgTree({ domain, selected_id, on_select }: OrgTreeProps) {
+/** 组织架构树 —— 根节点走 query，深层子级展开时按 parent_code 懒加载（规避 10 QPS 限流）。 */
+export function OrgTree({ directory_code, selected_id, on_select }: OrgTreeProps) {
   const { message } = App.useApp();
-  const { data: root_nodes = [] } = use_organization_children(domain, null);
+  const { data: root_nodes = [] } = use_organization_children(directory_code, null);
 
   const tree_data = useMemo(() => root_nodes.map(to_tree_node), [root_nodes]);
 
   const on_load_data: TreeProps['loadData'] = async (node) => {
     try {
       const data = await list_organization_children({
-        domain,
-        parent_id: String(node.key),
+        directory_code,
+        parent_code: String(node.key),
         page: 1,
         page_size: 500,
       });
@@ -48,7 +48,7 @@ export function OrgTree({ domain, selected_id, on_select }: OrgTreeProps) {
       onSelect={(_keys, info) => {
         const node = info.selectedNodes[0];
         if (node != null) {
-          on_select({ id: String(node.key) } as OrganizationInfo);
+          on_select({ organization_code: String(node.key) } as OrganizationInfo);
         }
       }}
     />

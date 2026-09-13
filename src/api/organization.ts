@@ -1,40 +1,26 @@
 import { request } from '@/api/client';
-import type { OrganizationInfo, OrganizationListData } from '@/types/identityhub';
+import type { PageData } from '@/api/envelope';
+import type { OrganizationInfo } from '@/types/identityhub';
+
+export type OrganizationListData = PageData & { list: OrganizationInfo[] };
 
 export interface ListOrganizationChildrenParams {
-  domain: string;
-  parent_id?: string;
+  directory_code: string;
+  parent_code?: string;
   page?: number;
   page_size?: number;
 }
 
-/** 物化路径树：按 parent_id 取直接子级（串行展开，10 QPS 限流约束）。 */
+/** 组织直接子级（物化路径树，按 parent_code 串行展开 —— 10 QPS 限流约束）。 */
 export function list_organization_children(
   params: ListOrganizationChildrenParams,
 ): Promise<OrganizationListData> {
   return request<OrganizationListData>('/identityhub/v1/organization/children', { params });
 }
 
-export function get_organization(id: string, domain: string): Promise<OrganizationInfo> {
-  return request<OrganizationInfo>('/identityhub/v1/organization/get', { params: { id, domain } });
-}
-
-export interface SearchOrganizationParams {
-  domain: string;
-  keyword: string;
-  page?: number;
-  page_size?: number;
-}
-
-export function search_organization(
-  params: SearchOrganizationParams,
-): Promise<OrganizationListData> {
-  return request<OrganizationListData>('/identityhub/v1/organization/search', { params });
-}
-
 export interface CreateOrganizationInput {
-  domain: string;
-  parent_id?: string;
+  directory_code: string;
+  parent_code?: string;
   name: string;
   description?: string;
 }
@@ -48,21 +34,21 @@ export interface UpdateOrganizationInput {
   description?: string;
 }
 
-/** Update 是全量覆盖非 patch。 */
+/** 部分更新 —— 仅名称与描述。 */
 export function update_organization(
-  id: string,
-  domain: string,
+  organization_code: string,
+  directory_code: string,
   data: UpdateOrganizationInput,
 ): Promise<void> {
   return request<void>('/identityhub/v1/organization/update', {
     method: 'PUT',
-    body: { id, domain, ...data },
+    body: { organization_code, directory_code, ...data },
   });
 }
 
-export function delete_organization(id: string, domain: string): Promise<void> {
+export function delete_organization(organization_code: string, directory_code: string): Promise<void> {
   return request<void>('/identityhub/v1/organization/delete', {
     method: 'DELETE',
-    params: { id, domain },
+    params: { organization_code, directory_code },
   });
 }

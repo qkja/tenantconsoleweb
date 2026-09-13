@@ -5,5 +5,5 @@ export * from '@/api/auth';
 export * from '@/api/directory';
 export * from '@/api/organization';
 export * from '@/api/user';
-export * from '@/api/security_group';
+export * from '@/api/user_role';
 export * from '@/api/tenant';

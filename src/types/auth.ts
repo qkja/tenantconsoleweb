@@ -1,41 +1,29 @@
-/** 认证相关类型 —— identityhub/authnexus 契约（snake_case）。 */
+/** 认证相关类型 —— authnexus 契约（snake_case）。 */
 
-export type AuthScope = 'admin' | 'member';
-
+/** 界面语言（应用内字典键，antd locale 同源）。 */
 export type UILanguage = 'zh_CN' | 'en_US';
 
-/** 登录会话所属租户 —— 单租户（无多企业概念，登录账号即租户 domain）。 */
-export interface SessionTenant {
-  tenant_id: string;
-  tenant_name: string;
-  /** 7 位数字唯一码，登录账号。 */
-  domain: string;
-  language: UILanguage;
-  ui_language: UILanguage;
-}
+/** 租户默认业务语言（`TenantInfo.language` 值域，落库）。 */
+export type TenantLanguage = 'zh-CN' | 'en-US';
 
-export interface SessionUser {
-  user_id: string;
-  username: string;
-  display_name: string;
-  scope: AuthScope;
-  roles: string[];
-}
-
-/** 登录 / 刷新成功后的会话负载。 */
-export interface SessionPayload {
+/** 公共 TokenData —— 三域登录 / 刷新共用（contract-design §2.4）。 */
+export interface TokenData {
   access_token: string;
-  user: SessionUser;
-  tenant: SessionTenant;
+  refresh_token: string;
+  /** 有效期（秒）。 */
+  expires_in: number;
+  /** 固定 `Bearer`。 */
+  token_type: string;
 }
 
-/** token claims（解码后）—— 仅内存使用，不落盘。 */
-export interface TokenClaims {
-  tenant_id: string;
-  domain?: string;
-  user_id: string;
-  username: string;
-  scope: AuthScope;
-  roles: string[];
-  exp: number;
+/** 租户管理员登录 / 刷新成功后的会话负载（仅内存，不落盘）。 */
+export interface SessionPayload extends TokenData {
+  tenant_code: string;
+  /** 首次登录须改密。 */
+  must_change_password: boolean;
+}
+
+/** 界面语言 → 请求头 `t-head-tenantUILanguage` 值（`zh_CN` → `zh-CN`）。 */
+export function to_header_ui_language(language: UILanguage): string {
+  return language === 'zh_CN' ? 'zh-CN' : 'en-US';
 }

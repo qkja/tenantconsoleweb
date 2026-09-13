@@ -11,7 +11,7 @@ export interface Dict {
   'nav.directory': string;
   'nav.organization': string;
   'nav.member': string;
-  'nav.security_group': string;
+  'nav.user_role': string;
   'nav.tenant': string;
   'contacts.group': string;
   'security.group': string;
@@ -23,20 +23,17 @@ export interface Dict {
   'topbar.language': string;
   'topbar.change_password': string;
   'topbar.logout': string;
+  'topbar.my_account': string;
 
   /* 认证 */
   'auth.login_title': string;
-  'auth.account': string;
-  'auth.account_required': string;
-  'auth.account_placeholder': string;
+  'auth.name': string;
+  'auth.name_required': string;
+  'auth.name_placeholder': string;
   'auth.password': string;
   'auth.password_required': string;
   'auth.password_placeholder': string;
   'auth.login': string;
-  'auth.error_unknown': string;
-  'auth.domain': string;
-  'auth.domain_required': string;
-  'auth.domain_placeholder': string;
   'auth.change_password_title': string;
   'auth.old_password': string;
   'auth.new_password': string;
@@ -49,10 +46,12 @@ export interface Dict {
   'directory.edit': string;
   'directory.name': string;
   'directory.name_required': string;
-  'directory.domain': string;
-  'directory.domain_required': string;
-  'directory.domain_hint': string;
+  'directory.type': string;
+  'directory.type_required': string;
+  'directory.type_immutable': string;
   'directory.description': string;
+  'directory.status': string;
+  'directory.code': string;
   'directory.created_at': string;
   'directory.delete_confirm': string;
 
@@ -62,62 +61,71 @@ export interface Dict {
   'organization.create_child': string;
   'organization.edit': string;
   'organization.parent': string;
+  'organization.path': string;
+  'organization.level': string;
   'organization.delete_confirm': string;
   'organization.no_selection': string;
-  'organization.member_count': string;
 
   /* 成员 */
   'member.title': string;
   'member.create': string;
   'member.edit': string;
   'member.detail': string;
-  'member.display_name': string;
-  'member.display_name_required': string;
-  'member.username': string;
-  'member.username_required': string;
+  'member.name': string;
+  'member.name_required': string;
+  'member.country_code': string;
   'member.phone': string;
   'member.email': string;
-  'member.email_invalid': string;
+  'member.description': string;
+  'member.organization': string;
+  'member.password': string;
+  'member.password_required': string;
+  'member.source': string;
+  'member.external_id': string;
+  'member.external_hint': string;
   'member.status': string;
-  'member.primary_org': string;
   'member.search': string;
   'member.delete_confirm': string;
+  'member.disable_confirm': string;
+  'member.enable_confirm': string;
 
-  /* 安全组 */
-  'security_group.create': string;
-  'security_group.edit': string;
-  'security_group.name': string;
-  'security_group.name_required': string;
-  'security_group.code': string;
-  'security_group.description': string;
-  'security_group.delete_confirm': string;
+  /* 用户角色 */
+  'user_role.create': string;
+  'user_role.edit': string;
+  'user_role.name': string;
+  'user_role.name_required': string;
+  'user_role.code': string;
+  'user_role.description': string;
+  'user_role.delete_confirm': string;
+  'user_role.members': string;
+  'user_role.select_members': string;
+  'user_role.add_members': string;
+  'user_role.remove': string;
+  'user_role.remove_confirm': string;
 
   /* 企业信息 */
   'tenant.company_profile': string;
-  'tenant.name': string;
-  'tenant.domain': string;
+  'tenant.edit': string;
+  'tenant.customer_name': string;
+  'tenant.customer_name_required': string;
   'tenant.contact_name': string;
-  'tenant.contact_phone': string;
-  'tenant.contact_email': string;
-  'tenant.status': string;
-  'tenant.remark': string;
+  'tenant.phone': string;
+  'tenant.email': string;
+  'tenant.address': string;
+  'tenant.language': string;
   'tenant.created_at': string;
 
-  /* 管理员管理 */
-  'admin.title': string;
-  'admin.add': string;
-  'admin.account': string;
-  'admin.account_required': string;
-  'admin.display_name': string;
-  'admin.display_name_required': string;
-  'admin.password': string;
-  'admin.password_required': string;
-  'admin.status': string;
-  'admin.disable_confirm': string;
-  'admin.enable_confirm': string;
-  'admin.disabled': string;
-  'admin.enabled': string;
-  'admin.added': string;
+  /* 我的账号 */
+  'account.title': string;
+  'account.rename': string;
+  'account.name': string;
+  'account.name_required': string;
+  'account.email': string;
+  'account.phone': string;
+  'account.roles': string;
+  'account.status': string;
+  'account.saved': string;
+  'account.rename_warning': string;
 
   /* 通用动作 */
   'common.placeholder': string;
@@ -130,6 +138,7 @@ export interface Dict {
   'common.deleted': string;
   'common.disable': string;
   'common.enable': string;
+  'common.email_invalid': string;
   'feature.coming_soon': string;
 
   /* 概览 */

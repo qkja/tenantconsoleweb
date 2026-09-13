@@ -1,27 +1,30 @@
 import { useQuery } from '@tanstack/react-query';
-import { list_users, search_users } from '@/api/user';
+import { list_users } from '@/api/user';
 import type { UserInfo } from '@/types/identityhub';
 
 /**
- * 成员列表（某目录域/组织下）—— 真实网关。
- * keyword 非空走 /search（identityhubsvr SearchUser），否则走 /list（ListUser，org_id 过滤）。
+ * 成员列表（某目录域 / 组织下）—— 真实网关 ListUser。
+ * keyword 命中 name/email/phone/description 模糊匹配（后端按 search_fields 白名单）。
  */
-export function use_user_list(domain: string, org_id: string | null, keyword = '') {
+export function use_user_list(
+  directory_code: string,
+  organization_code: string | null,
+  keyword = '',
+) {
   const trimmed = keyword.trim();
   return useQuery({
-    queryKey: ['user', 'list', domain, org_id ?? 'all', trimmed],
-    queryFn: () => {
-      if (trimmed !== '') {
-        return search_users({ domain, keyword: trimmed, page: 1, page_size: 500 });
-      }
-      return list_users({
-        domain,
-        org_id: org_id ?? undefined,
+    queryKey: ['user', 'list', directory_code, organization_code ?? 'all', trimmed],
+    queryFn: () =>
+      list_users({
+        directory_code,
+        organization_code: organization_code ?? undefined,
+        keyword: trimmed !== '' ? trimmed : undefined,
         page: 1,
         page_size: 500,
-      });
-    },
-    enabled: domain !== '',
+        sort_by: 'created_at',
+        descending: 'desc',
+      }),
+    enabled: directory_code !== '',
     select: (data) => data.list as UserInfo[],
     staleTime: 30_000,
   });

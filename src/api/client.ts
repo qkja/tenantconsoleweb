@@ -2,10 +2,10 @@ import { AuthExpiredError, BizError, RateLimitError, TransportError } from '@/ap
 import type { ApiEnvelope } from '@/api/envelope';
 import { use_scope } from '@/stores/scope';
 import { use_session } from '@/stores/session';
-import type { SessionPayload } from '@/types/auth';
+import { to_header_ui_language, type TokenData } from '@/types/auth';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api';
-const REFRESH_PATH = '/authnexus/v1/auth/refresh';
+const REFRESH_PATH = '/authnexus/v1/tenant/refresh';
 const DEFAULT_TIMEOUT_MS = 15_000;
 
 export interface RequestOptions {
@@ -38,12 +38,12 @@ async function do_refresh(): Promise<string | null> {
     if (!response.ok) {
       return null;
     }
-    const body = (await response.json().catch(() => null)) as ApiEnvelope<SessionPayload> | null;
-    if (body == null || body.code !== '0') {
+    const body = (await response.json().catch(() => null)) as ApiEnvelope<TokenData> | null;
+    if (body == null || body.code !== '0' || body.data == null) {
       return null;
     }
-    // 刷新成功 → 重建内存会话（access_token + user + tenants）。
-    use_session.getState().set_session(body.data);
+    // 刷新成功 → 仅更新内存 access token（refresh 只返回 TokenData）。
+    use_session.getState().set_access_token(body.data.access_token);
     return body.data.access_token;
   } catch {
     return null;
@@ -68,21 +68,17 @@ function build_headers(extra?: Record<string, string>): Headers {
   headers.set('Content-Type', 'application/json');
   headers.set('Accept', 'application/json');
 
-  const { access_token, user } = use_session.getState();
+  const { access_token } = use_session.getState();
   if (access_token != null) {
     headers.set('Authorization', `Bearer ${access_token}`);
   }
-  if (user != null) {
-    headers.set('t-head-userId', user.user_id);
-  }
 
-  const { tenant_id, ui_language } = use_scope.getState();
-  if (tenant_id != null) {
-    headers.set('t-head-tenantId', tenant_id);
+  const { tenant_code, ui_language } = use_scope.getState();
+  if (tenant_code != null) {
+    headers.set('t-head-tenantId', tenant_code);
   }
   if (ui_language != null) {
-    headers.set('t-head-tenantLanguage', ui_language);
-    headers.set('t-head-tenantUILanguage', ui_language);
+    headers.set('t-head-tenantUILanguage', to_header_ui_language(ui_language));
   }
   return headers;
 }

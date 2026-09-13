@@ -17,20 +17,11 @@ function plain_response(text: string, status = 200): Response {
 
 const session_payload = {
   access_token: 'new-token',
-  user: {
-    user_id: 'u_1',
-    username: 'admin',
-    display_name: '管理员',
-    scope: 'admin' as const,
-    roles: [],
-  },
-  tenant: {
-    tenant_id: 't_1',
-    tenant_name: '示例科技',
-    domain: '1000001',
-    language: 'zh_CN' as const,
-    ui_language: 'zh_CN' as const,
-  },
+  refresh_token: 'refresh-x',
+  expires_in: 7200,
+  token_type: 'Bearer',
+  tenant_code: 'tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP',
+  must_change_password: false,
 };
 
 describe('api client request —— 三条错误路径', () => {
@@ -71,11 +62,11 @@ describe('api client request —— 三条错误路径', () => {
     await expect(request('/foo')).rejects.toBeInstanceOf(RateLimitError);
   });
 
-  it('注入 Authorization + t-head-* 头', async () => {
+  it('注入 Authorization + t-head-* 头（tenantId / tenantUILanguage）', async () => {
     use_session.getState().set_session({ ...session_payload, access_token: 'token-x' });
     use_scope
       .getState()
-      .set_tenant({ tenant_id: 't_1', tenant_domain: '1000001', ui_language: 'zh_CN' });
+      .set_tenant({ tenant_code: 'tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP', ui_language: 'zh_CN' });
     const fetch_mock = vi.fn().mockResolvedValue(json_response({ code: '0', msg: '', data: null }));
     vi.stubGlobal('fetch', fetch_mock);
 
@@ -84,9 +75,9 @@ describe('api client request —— 三条错误路径', () => {
     const [, init] = fetch_mock.mock.calls[0] as [string, RequestInit];
     const headers = init.headers as Headers;
     expect(headers.get('Authorization')).toBe('Bearer token-x');
-    expect(headers.get('t-head-tenantId')).toBe('t_1');
-    expect(headers.get('t-head-userId')).toBe('u_1');
-    expect(headers.get('t-head-tenantUILanguage')).toBe('zh_CN');
+    expect(headers.get('t-head-tenantId')).toBe('tnt_01HX8ZK3M9QF2V7N4B6TCD1RWP');
+    expect(headers.get('t-head-tenantUILanguage')).toBe('zh-CN');
+    expect(headers.get('t-head-userId')).toBeNull();
   });
 
   it('GET 拼接 query 参数（page/page_size）', async () => {
@@ -101,10 +92,16 @@ describe('api client request —— 三条错误路径', () => {
 
   it('401/1004 → 单飞刷新后重试一次', async () => {
     use_session.getState().set_session({ ...session_payload, access_token: 'expired' });
+    const refresh_data = {
+      access_token: 'new-token',
+      refresh_token: 'r2',
+      expires_in: 7200,
+      token_type: 'Bearer',
+    };
     const fetch_mock = vi
       .fn()
       .mockResolvedValueOnce(json_response({ code: '1004', msg: '未认证', data: {} }))
-      .mockResolvedValueOnce(json_response({ code: '0', msg: '', data: session_payload }))
+      .mockResolvedValueOnce(json_response({ code: '0', msg: '', data: refresh_data }))
       .mockResolvedValueOnce(json_response({ code: '0', msg: '', data: null }));
     vi.stubGlobal('fetch', fetch_mock);
 
