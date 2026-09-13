@@ -61,6 +61,9 @@ describe('tenant api（企业信息 + 管理员管理 §2.2）', () => {
     await set_admin_status({ account: 'admin2', status: 'disable' });
     expect(calls[0].url).toContain('/tenantmanager/v1/tenant/admins/status');
     expect(calls[0].init?.method).toBe('PUT');
-    expect(JSON.parse(String(calls[0].init?.body))).toEqual({ account: 'admin2', status: 'disable' });
+    expect(JSON.parse(String(calls[0].init?.body))).toEqual({
+      account: 'admin2',
+      status: 'disable',
+    });
   });
 });
